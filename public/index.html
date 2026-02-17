@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BRIKSS Forms - Gestion documental inmobiliaria facil, rapido y 100% online">
+  <title>BRIKSS Forms - Gestion Documental</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a365d'/><text x='4' y='24' font-size='20' fill='%23ff6b35' font-weight='800'>B</text></svg>">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="header__inner">
+      <a href="/" class="header__logo" aria-label="BRIKSS - Inicio">
+        <img src="assets/logo-brikss.svg" alt="BRIKSS Logo" width="160" height="40">
+      </a>
+      <button class="header__menu-toggle" aria-label="Abrir menu" aria-expanded="false" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="header__nav" role="navigation" aria-label="Navegacion principal">
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Residencial</a>
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Comercial</a>
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Proyectos</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero" role="region" aria-label="Seccion principal">
+    <div class="hero__content">
+      <span class="hero__badge">100% Online</span>
+      <h1>Gestion Documental BRIKSS</h1>
+      <p class="hero__subtitle">
+        Sube tus documentos de forma facil, rapida y segura.
+        Selecciona tu tipo de tramite para comenzar.
+      </p>
+    </div>
+  </section>
+
+  <!-- Cards -->
+  <main class="cards-section" role="main">
+    <div class="cards-grid">
+      <!-- Comprador -->
+      <article class="card" onclick="window.location.href='comprador.html'" tabindex="0" role="link" aria-label="Formulario para compradores" onkeydown="if(event.key==='Enter') window.location.href='comprador.html'">
+        <div class="card__icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h2 class="card__title">Comprador</h2>
+        <p class="card__desc">Sube tus datos personales, cedula y forma de pago para tu proceso de compra.</p>
+        <span class="card__link">Iniciar tramite</span>
+      </article>
+
+      <!-- Vendedor -->
+      <article class="card" onclick="window.location.href='vendedor.html'" tabindex="0" role="link" aria-label="Formulario para vendedores" onkeydown="if(event.key==='Enter') window.location.href='vendedor.html'">
+        <div class="card__icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <h2 class="card__title">Vendedor</h2>
+        <p class="card__desc">Completa tu expediente con todos los documentos requeridos para la venta de tu inmueble.</p>
+        <span class="card__link">Iniciar tramite</span>
+      </article>
+
+      <!-- Arriendo -->
+      <article class="card" onclick="window.location.href='arriendo.html'" tabindex="0" role="link" aria-label="Formulario para arriendos" onkeydown="if(event.key==='Enter') window.location.href='arriendo.html'">
+        <div class="card__icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+        </div>
+        <h2 class="card__title">Arriendo</h2>
+        <p class="card__desc">Gestiona contratos de arrendamiento con datos completos de arrendador y arrendatario.</p>
+        <span class="card__link">Iniciar tramite</span>
+      </article>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__section">
+        <h4>BRIKSS</h4>
+        <ul>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Publica un inmueble</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Unete al equipo</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Conocenos</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer__section">
+        <h4>Contacto</h4>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128222;</span>
+          <span>+57 315 857 4462</span>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128222;</span>
+          <span>+57 318 375 7239</span>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#9993;</span>
+          <a href="mailto:contacto@brikss.com">contacto@brikss.com</a>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128205;</span>
+          <span>Cra. 15 #98 42 of 505, Bogota</span>
+        </div>
+      </div>
+      <div class="footer__section">
+        <h4>Siguenos</h4>
+        <div class="footer__social">
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p>&copy; 2025 BRIKSS Inmobiliaria. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Menu movil
+    function toggleMenu() {
+      const nav = document.querySelector('.header__nav');
+      const btn = document.querySelector('.header__menu-toggle');
+      const isOpen = nav.classList.toggle('open');
+      btn.setAttribute('aria-expanded', isOpen);
+    }
+  </script>
+</body>
+</html>
