@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BRIKSS Forms - Formulario Vendedor para gestion documental inmobiliaria">
+  <title>BRIKSS Forms - Formulario Vendedor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a365d'/><text x='4' y='24' font-size='20' fill='%23ff6b35' font-weight='800'>B</text></svg>">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="header__inner">
+      <a href="index.html" class="header__logo" aria-label="BRIKSS - Inicio">
+        <img src="assets/logo-brikss.svg" alt="BRIKSS Logo" width="160" height="40">
+      </a>
+      <button class="header__menu-toggle" aria-label="Abrir menu" aria-expanded="false" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="header__nav" role="navigation" aria-label="Navegacion principal">
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Residencial</a>
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Comercial</a>
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Proyectos</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Form Container -->
+  <main class="form-container" role="main">
+    <div class="form-card">
+
+      <!-- Form Header -->
+      <div class="form-header">
+        <h2>Formulario Vendedor</h2>
+        <p>Completa tu expediente con todos los documentos requeridos para la venta de tu inmueble.</p>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-bar">
+        <div class="progress-bar__track">
+          <div class="progress-bar__line"></div>
+          <div class="progress-bar__fill" style="width: 0%"></div>
+          <div class="progress-bar__step active">1</div>
+          <div class="progress-bar__step">2</div>
+          <div class="progress-bar__step">3</div>
+          <div class="progress-bar__step">4</div>
+          <div class="progress-bar__step">5</div>
+          <div class="progress-bar__step">6</div>
+          <div class="progress-bar__step">7</div>
+        </div>
+        <div class="progress-bar__labels">
+          <span class="progress-bar__label active">Datos</span>
+          <span class="progress-bar__label">Tradicion</span>
+          <span class="progress-bar__label">Bancaria</span>
+          <span class="progress-bar__label">Cedula</span>
+          <span class="progress-bar__label">RUT</span>
+          <span class="progress-bar__label">Paz y Salvo</span>
+          <span class="progress-bar__label">Extras</span>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form id="vendedorForm" novalidate>
+
+        <!-- STEP 1: Datos Basicos -->
+        <div class="form-step active">
+          <h3 class="form-step__title">Datos Basicos del Vendedor</h3>
+
+          <div class="form-group">
+            <label class="form-label" for="fechaFormulario">Fecha Formulario</label>
+            <input type="text" id="fechaFormulario" class="form-input" readonly>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="nombre">Nombre del Vendedor <span class="required">*</span></label>
+              <input type="text" id="nombre" class="form-input" required data-validate="required" placeholder="Nombre completo">
+              <span class="form-error"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cedula">Cedula <span class="required">*</span></label>
+              <input type="text" id="cedula" class="form-input" required data-validate="cedula" placeholder="Ej: 1234567890">
+              <span class="form-error"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="celular">Celular <span class="required">*</span></label>
+              <input type="tel" id="celular" class="form-input" required data-validate="celular" placeholder="+57 315 857 4462">
+              <span class="form-error"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">Email <span class="required">*</span></label>
+              <input type="email" id="email" class="form-input" required data-validate="email" placeholder="correo@ejemplo.com">
+              <span class="form-error"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="edificio">Nombre Edificio o Conjunto <span class="required">*</span></label>
+              <input type="text" id="edificio" class="form-input" required data-validate="required" placeholder="Nombre del edificio o conjunto">
+              <span class="form-error"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="numeroInmueble">Numero del apartamento o casa <span class="required">*</span></label>
+              <input type="text" id="numeroInmueble" class="form-input" required data-validate="required" placeholder="Ej: Apto 301">
+              <span class="form-error"></span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="direccion">Direccion del Inmueble <span class="required">*</span></label>
+              <input type="text" id="direccion" class="form-input" required data-validate="required" placeholder="Direccion completa">
+              <span class="form-error"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ciudad">Ciudad <span class="required">*</span></label>
+              <input type="text" id="ciudad" class="form-input" required data-validate="required" placeholder="Ej: Bogota">
+              <span class="form-error"></span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="estadoInmueble">Estado del Inmueble <span class="required">*</span></label>
+            <select id="estadoInmueble" class="form-select" required>
+              <option value="">Selecciona una opcion</option>
+              <option value="Nuevo">Nuevo</option>
+              <option value="Usado - Buen estado">Usado - Buen estado</option>
+              <option value="Usado - Requiere reparaciones">Usado - Requiere reparaciones</option>
+              <option value="En construccion">En construccion</option>
+              <option value="Remodelado">Remodelado</option>
+            </select>
+            <span class="form-error"></span>
+          </div>
+
+          <div class="form-group" data-radio-required="estadoCivil">
+            <label class="form-label">Estado Civil <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="estadoCivil" value="Soltero/a">
+                <span>Soltero/a</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="estadoCivil" value="Casado/a">
+                <span>Casado/a</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="estadoCivil" value="Viudo/a">
+                <span>Viudo/a</span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="estadoCivil" value="Union Libre">
+                <span>Union Libre</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-nav">
+            <div></div>
+            <button type="button" class="btn btn-primary" data-action="next">Siguiente</button>
+          </div>
+        </div>
+
+        <!-- STEP 2: Certificado de Tradicion y Libertad -->
+        <div class="form-step">
+          <h3 class="form-step__title">Certificado de Tradicion y Libertad</h3>
+          <p class="text-gray mb-sm">Sube el Certificado de Tradicion y Libertad del inmueble. Debe ser reciente (no mayor a 30 dias).</p>
+
+          <div class="upload-zone" id="uploadTradicion">
+            <input type="file" accept=".pdf" name="tradicion">
+            <div class="upload-zone__icon">&#128196;</div>
+            <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+            <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+            <div class="upload-zone__file-info">
+              <span class="file-name"></span>
+              <span class="file-size"></span>
+              <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+            </div>
+          </div>
+
+          <div class="form-nav">
+            <button type="button" class="btn btn-secondary" data-action="prev">Anterior</button>
+            <button type="button" class="btn btn-primary" data-action="next">Siguiente</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Certificacion Bancaria -->
+        <div class="form-step">
+          <h3 class="form-step__title">Certificacion Bancaria</h3>
+          <p class="text-gray mb-sm">Sube la certificacion bancaria del vendedor para el desembolso de los fondos.</p>
+
+          <div class="upload-zone" id="uploadBancaria">
+            <input type="file" accept=".pdf" name="bancaria">
+            <div class="upload-zone__icon">&#127974;</div>
+            <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+            <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+            <div class="upload-zone__file-info">
+              <span class="file-name"></span>
+              <span class="file-size"></span>
+              <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+            </div>
+          </div>
+
+          <div class="form-nav">
+            <button type="button" class="btn btn-secondary" data-action="prev">Anterior</button>
+            <button type="button" class="btn btn-primary" data-action="next">Siguiente</button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Cedula del Vendedor -->
+        <div class="form-step">
+          <h3 class="form-step__title">Cedula del Vendedor</h3>
+          <p class="text-gray mb-sm">Sube una copia de la cedula de ciudadania del vendedor (ambos lados).</p>
+
+          <div class="upload-zone" id="uploadCedula">
+            <input type="file" accept=".pdf" name="cedulaDoc">
+            <div class="upload-zone__icon">&#128179;</div>
+            <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+            <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+            <div class="upload-zone__file-info">
+              <span class="file-name"></span>
+              <span class="file-size"></span>
+              <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+            </div>
+          </div>
+
+          <div class="form-nav">
+            <button type="button" class="btn btn-secondary" data-action="prev">Anterior</button>
+            <button type="button" class="btn btn-primary" data-action="next">Siguiente</button>
+          </div>
+        </div>
+
+        <!-- STEP 5: RUT -->
+        <div class="form-step">
+          <h3 class="form-step__title">RUT</h3>
+          <p class="text-gray mb-sm">Sube el Registro Unico Tributario (RUT) actualizado del vendedor.</p>
+
+          <div class="upload-zone" id="uploadRut">
+            <input type="file" accept=".pdf" name="rut">
+            <div class="upload-zone__icon">&#128203;</div>
+            <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+            <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+            <div class="upload-zone__file-info">
+              <span class="file-name"></span>
+              <span class="file-size"></span>
+              <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+            </div>
+          </div>
+
+          <div class="form-nav">
+            <button type="button" class="btn btn-secondary" data-action="prev">Anterior</button>
+            <button type="button" class="btn btn-primary" data-action="next">Siguiente</button>
+          </div>
+        </div>
+
+        <!-- STEP 6: Paz y Salvo de Administracion -->
+        <div class="form-step">
+          <h3 class="form-step__title">Paz y Salvo de Administracion</h3>
+          <p class="text-gray mb-sm">Sube el certificado de Paz y Salvo expedido por la administracion del edificio o conjunto.</p>
+
+          <div class="upload-zone" id="uploadPazSalvo">
+            <input type="file" accept=".pdf" name="pazSalvo">
+            <div class="upload-zone__icon">&#9989;</div>
+            <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+            <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+            <div class="upload-zone__file-info">
+              <span class="file-name"></span>
+              <span class="file-size"></span>
+              <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+            </div>
+          </div>
+
+          <div class="form-nav">
+            <button type="button" class="btn btn-secondary" data-action="prev">Anterior</button>
+            <button type="button" class="btn btn-primary" data-action="next">Siguiente</button>
+          </div>
+        </div>
+
+        <!-- STEP 7: Parqueadero / Deposito -->
+        <div class="form-step">
+          <h3 class="form-step__title">Parqueadero y Deposito</h3>
+          <p class="text-gray mb-sm">Si aplica, sube los certificados de parqueadero y/o deposito asociados al inmueble.</p>
+
+          <div class="form-group">
+            <label class="checkbox-option">
+              <input type="checkbox" id="tieneParqueadero">
+              <span>Tiene Certificado de Parqueadero</span>
+            </label>
+            <div class="conditional-section">
+              <div class="form-group">
+                <label class="form-label" for="numParqueadero">Numero de Parqueadero</label>
+                <input type="text" id="numParqueadero" class="form-input" placeholder="Ej: P-12">
+              </div>
+              <div class="upload-zone" id="uploadParqueadero">
+                <input type="file" accept=".pdf" name="parqueadero">
+                <div class="upload-zone__icon">&#128663;</div>
+                <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+                <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+                <div class="upload-zone__file-info">
+                  <span class="file-name"></span>
+                  <span class="file-size"></span>
+                  <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mt-md">
+            <label class="checkbox-option">
+              <input type="checkbox" id="tieneDeposito">
+              <span>Tiene Certificado de Deposito</span>
+            </label>
+            <div class="conditional-section">
+              <div class="form-group">
+                <label class="form-label" for="numDeposito">Numero de Deposito</label>
+                <input type="text" id="numDeposito" class="form-input" placeholder="Ej: D-05">
+              </div>
+              <div class="upload-zone" id="uploadDeposito">
+                <input type="file" accept=".pdf" name="deposito">
+                <div class="upload-zone__icon">&#128230;</div>
+                <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+                <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+                <div class="upload-zone__file-info">
+                  <span class="file-name"></span>
+                  <span class="file-size"></span>
+                  <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-nav">
+            <button type="button" class="btn btn-secondary" data-action="prev">Anterior</button>
+            <button type="button" class="btn btn-success btn-lg" data-action="submit">Enviar Documentos</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__section">
+        <h4>BRIKSS</h4>
+        <ul>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Publica un inmueble</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Unete al equipo</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Conocenos</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer__section">
+        <h4>Contacto</h4>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128222;</span>
+          <span>+57 315 857 4462</span>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128222;</span>
+          <span>+57 318 375 7239</span>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#9993;</span>
+          <a href="mailto:contacto@brikss.com">contacto@brikss.com</a>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128205;</span>
+          <span>Cra. 15 #98 42 of 505, Bogota</span>
+        </div>
+      </div>
+      <div class="footer__section">
+        <h4>Siguenos</h4>
+        <div class="footer__social">
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p>&copy; 2025 BRIKSS Inmobiliaria. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/vendedor.js"></script>
+</body>
+</html>

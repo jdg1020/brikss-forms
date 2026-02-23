@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BRIKSS Forms - Formulario de Arriendo para gestion de contratos de arrendamiento">
+  <title>BRIKSS Forms - Formulario de Arriendo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a365d'/><text x='4' y='24' font-size='20' fill='%23ff6b35' font-weight='800'>B</text></svg>">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="header__inner">
+      <a href="index.html" class="header__logo" aria-label="BRIKSS - Inicio">
+        <img src="assets/logo-brikss.svg" alt="BRIKSS Logo" width="160" height="40">
+      </a>
+      <button class="header__menu-toggle" aria-label="Abrir menu" aria-expanded="false" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="header__nav" role="navigation" aria-label="Navegacion principal">
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Residencial</a>
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Comercial</a>
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Proyectos</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Formulario -->
+  <main class="form-container" role="main">
+    <div class="form-card">
+
+      <!-- Header del formulario -->
+      <div class="form-header">
+        <h2>Formulario de Arriendo</h2>
+        <p>Completa la informacion para gestionar tu contrato de arrendamiento</p>
+      </div>
+
+      <!-- Barra de progreso - 6 pasos -->
+      <div class="progress-bar">
+        <div class="progress-bar__track">
+          <div class="progress-bar__line"></div>
+          <div class="progress-bar__fill" style="width: 0%"></div>
+          <div class="progress-bar__step active">1</div>
+          <div class="progress-bar__step">2</div>
+          <div class="progress-bar__step">3</div>
+          <div class="progress-bar__step">4</div>
+          <div class="progress-bar__step">5</div>
+          <div class="progress-bar__step">6</div>
+        </div>
+        <div class="progress-bar__labels">
+          <span class="progress-bar__label active">Partes</span>
+          <span class="progress-bar__label">Inmueble</span>
+          <span class="progress-bar__label">Economia</span>
+          <span class="progress-bar__label">Contrato</span>
+          <span class="progress-bar__label">Codeudor</span>
+          <span class="progress-bar__label">Documentos</span>
+        </div>
+      </div>
+
+      <!-- Formulario principal -->
+      <form id="arriendoForm" novalidate>
+
+        <!-- PASO 1: Datos de las Partes -->
+        <div class="form-step active">
+          <h3 class="form-step__title">Datos de las Partes</h3>
+
+          <div class="section-title">
+            <span class="section-title__icon">&#128203;</span>
+            ARRENDADOR
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="arrendadorNombre">Nombre <span class="required">*</span></label>
+            <input type="text" id="arrendadorNombre" name="arrendadorNombre" class="form-input" required data-validate="required" placeholder="Nombre completo del arrendador">
+            <span class="form-error">Este campo es obligatorio</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="arrendadorCedula">Cedula <span class="required">*</span></label>
+            <input type="text" id="arrendadorCedula" name="arrendadorCedula" class="form-input" required data-validate="cedula" placeholder="Numero de cedula">
+            <span class="form-error">Ingresa un numero de cedula valido</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="arrendadorDireccion">Direccion <span class="required">*</span></label>
+            <input type="text" id="arrendadorDireccion" name="arrendadorDireccion" class="form-input" required data-validate="required" placeholder="Direccion de residencia">
+            <span class="form-error">Este campo es obligatorio</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="arrendadorTelefono">Telefono <span class="required">*</span></label>
+            <input type="tel" id="arrendadorTelefono" name="arrendadorTelefono" class="form-input" required data-validate="celular" placeholder="+57 315 857 4462">
+            <span class="form-error">Formato: +57 315 857 4462</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="arrendadorEmail">Email <span class="required">*</span></label>
+            <input type="email" id="arrendadorEmail" name="arrendadorEmail" class="form-input" required data-validate="email" placeholder="correo@ejemplo.com">
+            <span class="form-error">Ingresa un correo electronico valido</span>
+          </div>
+
+          <div class="form-group" data-radio-required="arrendadorEstadoCivil">
+            <label class="form-label">Estado Civil <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="arrendadorEstadoCivil" value="Soltero/a"> Soltero/a
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="arrendadorEstadoCivil" value="Casado/a"> Casado/a
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="arrendadorEstadoCivil" value="Viudo/a"> Viudo/a
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="arrendadorEstadoCivil" value="Union Libre"> Union Libre
+              </label>
+            </div>
+          </div>
+
+          <div class="section-title mt-md">
+            <span class="section-title__icon">&#128203;</span>
+            ARRENDATARIO
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="arrendatarioNombre">Nombre <span class="required">*</span></label>
+            <input type="text" id="arrendatarioNombre" name="arrendatarioNombre" class="form-input" required data-validate="required" placeholder="Nombre completo del arrendatario">
+            <span class="form-error">Este campo es obligatorio</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="arrendatarioCedula">Cedula <span class="required">*</span></label>
+            <input type="text" id="arrendatarioCedula" name="arrendatarioCedula" class="form-input" required data-validate="cedula" placeholder="Numero de cedula">
+            <span class="form-error">Ingresa un numero de cedula valido</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="arrendatarioDireccion">Direccion <span class="required">*</span></label>
+            <input type="text" id="arrendatarioDireccion" name="arrendatarioDireccion" class="form-input" required data-validate="required" placeholder="Direccion de residencia">
+            <span class="form-error">Este campo es obligatorio</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="arrendatarioTelefono">Telefono <span class="required">*</span></label>
+            <input type="tel" id="arrendatarioTelefono" name="arrendatarioTelefono" class="form-input" required data-validate="celular" placeholder="+57 315 857 4462">
+            <span class="form-error">Formato: +57 315 857 4462</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="arrendatarioEmail">Email <span class="required">*</span></label>
+            <input type="email" id="arrendatarioEmail" name="arrendatarioEmail" class="form-input" required data-validate="email" placeholder="correo@ejemplo.com">
+            <span class="form-error">Ingresa un correo electronico valido</span>
+          </div>
+
+          <div class="form-group" data-radio-required="arrendatarioEstadoCivil">
+            <label class="form-label">Estado Civil <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="arrendatarioEstadoCivil" value="Soltero/a"> Soltero/a
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="arrendatarioEstadoCivil" value="Casado/a"> Casado/a
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="arrendatarioEstadoCivil" value="Viudo/a"> Viudo/a
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="arrendatarioEstadoCivil" value="Union Libre"> Union Libre
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 2: Datos del Inmueble -->
+        <div class="form-step">
+          <h3 class="form-step__title">Datos del Inmueble</h3>
+
+          <div class="form-group">
+            <label class="form-label" for="inmuebleDireccion">Direccion Completa <span class="required">*</span></label>
+            <input type="text" id="inmuebleDireccion" name="inmuebleDireccion" class="form-input" required data-validate="required" placeholder="Direccion completa del inmueble">
+            <span class="form-error">Este campo es obligatorio</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="matricula">Matricula Inmobiliaria <span class="required">*</span></label>
+            <input type="text" id="matricula" name="matricula" class="form-input" required data-validate="required" placeholder="Numero de matricula inmobiliaria">
+            <span class="form-error">Este campo es obligatorio</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="estrato">Estrato</label>
+              <select id="estrato" name="estrato" class="form-select">
+                <option value="">Seleccionar</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="tipoInmueble">Tipo</label>
+              <select id="tipoInmueble" name="tipoInmueble" class="form-select">
+                <option value="">Seleccionar</option>
+                <option value="Casa">Casa</option>
+                <option value="Apartamento">Apartamento</option>
+                <option value="Local">Local</option>
+                <option value="Oficina">Oficina</option>
+                <option value="Bodega">Bodega</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="area">Area m2</label>
+            <input type="number" id="area" name="area" class="form-input" placeholder="Ej: 85" min="0">
+          </div>
+
+          <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div class="form-group">
+              <label class="form-label" for="habitaciones">Habitaciones</label>
+              <input type="number" id="habitaciones" name="habitaciones" class="form-input" placeholder="0" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="banos">Banos</label>
+              <input type="number" id="banos" name="banos" class="form-input" placeholder="0" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="garajes">Garajes</label>
+              <input type="number" id="garajes" name="garajes" class="form-input" placeholder="0" min="0">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="inventario">Inventario / Accesorios</label>
+            <textarea id="inventario" name="inventario" class="form-textarea" placeholder="Describe los accesorios, electrodomesticos y elementos incluidos en el inmueble"></textarea>
+          </div>
+
+          <div class="form-group" data-radio-required="usoDestinado">
+            <label class="form-label">Uso Destinado <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="usoDestinado" value="Vivienda"> Vivienda
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="usoDestinado" value="Comercio"> Comercio
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="usoDestinado" value="Mixto"> Mixto
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 3: Condiciones Economicas -->
+        <div class="form-step">
+          <h3 class="form-step__title">Condiciones Economicas</h3>
+
+          <div class="form-group">
+            <label class="form-label" for="canon">Canon Mensual <span class="required">*</span></label>
+            <input type="text" id="canon" name="canon" class="form-input" required data-validate="money" placeholder="1.500.000">
+            <span class="form-hint">COP</span>
+            <span class="form-error">Ingresa un monto valido</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="diaPago">Dia de Pago</label>
+            <select id="diaPago" name="diaPago" class="form-select">
+              <option value="">Seleccionar dia</option>
+              <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+              <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+              <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+              <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+              <option value="13">13</option><option value="14">14</option><option value="15">15</option>
+              <option value="16">16</option><option value="17">17</option><option value="18">18</option>
+              <option value="19">19</option><option value="20">20</option><option value="21">21</option>
+              <option value="22">22</option><option value="23">23</option><option value="24">24</option>
+              <option value="25">25</option><option value="26">26</option><option value="27">27</option>
+              <option value="28">28</option><option value="29">29</option><option value="30">30</option>
+              <option value="31">31</option>
+            </select>
+          </div>
+
+          <div class="form-group" data-radio-required="formaPagoArriendo">
+            <label class="form-label">Forma de Pago <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="formaPagoArriendo" value="Consignacion"> Consignacion
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="formaPagoArriendo" value="Transferencia"> Transferencia
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="formaPagoArriendo" value="Efectivo"> Efectivo
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="incremento">Incremento Anual</label>
+            <input type="text" id="incremento" name="incremento" class="form-input" readonly value="IPC">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="deposito">Deposito / Garantia</label>
+            <input type="text" id="deposito" name="deposito" class="form-input" data-validate="money" placeholder="500.000">
+            <span class="form-hint">COP</span>
+            <span class="form-error">Ingresa un monto valido</span>
+          </div>
+
+          <div class="form-group" data-radio-required="serviciosPaga">
+            <label class="form-label">Servicios Publicos paga <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="serviciosPaga" value="Arrendador"> Arrendador
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="serviciosPaga" value="Arrendatario"> Arrendatario
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="serviciosPaga" value="Compartido"> Compartido
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" data-radio-required="adminPaga">
+            <label class="form-label">Administracion paga <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="adminPaga" value="Arrendador"> Arrendador
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="adminPaga" value="Arrendatario"> Arrendatario
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="adminPaga" value="Compartido"> Compartido
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 4: Condiciones del Contrato -->
+        <div class="form-step">
+          <h3 class="form-step__title">Condiciones del Contrato</h3>
+
+          <div class="form-group">
+            <label class="form-label" for="fechaInicio">Fecha de Inicio <span class="required">*</span></label>
+            <input type="date" id="fechaInicio" name="fechaInicio" class="form-input" required data-validate="required">
+            <span class="form-error">Este campo es obligatorio</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="duracion">Duracion <span class="required">*</span></label>
+            <input type="number" id="duracion" name="duracion" class="form-input" required data-validate="required" placeholder="12" min="1">
+            <span class="form-hint">meses</span>
+            <span class="form-error">Este campo es obligatorio</span>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-option">
+              <input type="checkbox" id="renovacionAuto" name="renovacionAuto"> Renovacion Automatica
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="causalesTerminacion">Causales de Terminacion Anticipada</label>
+            <textarea id="causalesTerminacion" name="causalesTerminacion" class="form-textarea" placeholder="Describe las causales de terminacion anticipada del contrato"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="clausulaPenal">Clausula Penal</label>
+            <input type="text" id="clausulaPenal" name="clausulaPenal" class="form-input" data-validate="money" placeholder="1.000.000">
+            <span class="form-hint">COP</span>
+            <span class="form-error">Ingresa un monto valido</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Restricciones</label>
+            <div class="checkbox-group">
+              <label class="checkbox-option">
+                <input type="checkbox" id="noMascotas" name="noMascotas"> No se permiten mascotas
+              </label>
+              <label class="checkbox-option">
+                <input type="checkbox" id="noModificaciones" name="noModificaciones"> No se permiten modificaciones
+              </label>
+              <label class="checkbox-option">
+                <input type="checkbox" id="noSubarriendo" name="noSubarriendo"> No se permite subarriendo
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 5: Codeudor / Fiador -->
+        <div class="form-step">
+          <h3 class="form-step__title">Codeudor / Fiador</h3>
+
+          <div class="form-group">
+            <label class="checkbox-option">
+              <input type="checkbox" id="tieneCodeudor" name="tieneCodeudor"> Tiene Codeudor / Fiador
+            </label>
+          </div>
+
+          <div class="conditional-section" id="codeudorSection">
+            <div class="form-group">
+              <label class="form-label" for="codeudorNombre">Nombre</label>
+              <input type="text" id="codeudorNombre" name="codeudorNombre" class="form-input" placeholder="Nombre completo del codeudor">
+              <span class="form-error">Este campo es obligatorio</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="codeudorCedula">Cedula</label>
+              <input type="text" id="codeudorCedula" name="codeudorCedula" class="form-input" data-validate="cedula" placeholder="Numero de cedula">
+              <span class="form-error">Ingresa un numero de cedula valido</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="codeudorDireccion">Direccion</label>
+              <input type="text" id="codeudorDireccion" name="codeudorDireccion" class="form-input" placeholder="Direccion de residencia">
+              <span class="form-error">Este campo es obligatorio</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="codeudorTelefono">Telefono</label>
+              <input type="tel" id="codeudorTelefono" name="codeudorTelefono" class="form-input" data-validate="celular" placeholder="+57 315 857 4462">
+              <span class="form-error">Formato: +57 315 857 4462</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="codeudorEmail">Email</label>
+              <input type="email" id="codeudorEmail" name="codeudorEmail" class="form-input" data-validate="email" placeholder="correo@ejemplo.com">
+              <span class="form-error">Ingresa un correo electronico valido</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PASO 6: Documentos Adjuntos -->
+        <div class="form-step">
+          <h3 class="form-step__title">Documentos Adjuntos</h3>
+
+          <div class="form-group">
+            <label class="form-label">Cedula Arrendador <span class="required">*</span></label>
+            <div class="upload-zone" id="uploadCedulaArrendador">
+              <input type="file" accept=".pdf" name="cedulaArrendador" aria-label="Subir cedula del arrendador">
+              <div class="upload-zone__icon">&#128196;</div>
+              <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+              <p class="upload-zone__hint">Solo PDF - Maximo 10MB</p>
+              <div class="upload-zone__file-info">
+                <span>&#128196;</span>
+                <span class="file-name"></span>
+                <span class="file-size"></span>
+                <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Cedula Arrendatario <span class="required">*</span></label>
+            <div class="upload-zone" id="uploadCedulaArrendatario">
+              <input type="file" accept=".pdf" name="cedulaArrendatario" aria-label="Subir cedula del arrendatario">
+              <div class="upload-zone__icon">&#128196;</div>
+              <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+              <p class="upload-zone__hint">Solo PDF - Maximo 10MB</p>
+              <div class="upload-zone__file-info">
+                <span>&#128196;</span>
+                <span class="file-name"></span>
+                <span class="file-size"></span>
+                <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Certificado Tradicion y Libertad <span class="required">*</span></label>
+            <div class="upload-zone" id="uploadTradicion">
+              <input type="file" accept=".pdf" name="tradicion" aria-label="Subir certificado de tradicion y libertad">
+              <div class="upload-zone__icon">&#128196;</div>
+              <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+              <p class="upload-zone__hint">Solo PDF - Maximo 10MB</p>
+              <div class="upload-zone__file-info">
+                <span>&#128196;</span>
+                <span class="file-name"></span>
+                <span class="file-size"></span>
+                <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Cedula Codeudor (si aplica)</label>
+            <div class="upload-zone" id="uploadCedulaCodeudor">
+              <input type="file" accept=".pdf" name="cedulaCodeudor" aria-label="Subir cedula del codeudor">
+              <div class="upload-zone__icon">&#128196;</div>
+              <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
+              <p class="upload-zone__hint">Solo PDF - Maximo 10MB</p>
+              <div class="upload-zone__file-info">
+                <span>&#128196;</span>
+                <span class="file-name"></span>
+                <span class="file-size"></span>
+                <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- Navegacion del formulario -->
+      <div class="form-nav">
+        <button type="button" class="btn btn-secondary" id="btnPrev" style="display: none;">
+          &#8592; Anterior
+        </button>
+        <div></div>
+        <button type="button" class="btn btn-primary" id="btnNext">
+          Siguiente &#8594;
+        </button>
+        <button type="button" class="btn btn-success" id="btnSubmit" style="display: none;">
+          Enviar Documentos &#10003;
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__section">
+        <h4>BRIKSS</h4>
+        <ul>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Publica un inmueble</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Unete al equipo</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Conocenos</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer__section">
+        <h4>Contacto</h4>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128222;</span>
+          <span>+57 315 857 4462</span>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128222;</span>
+          <span>+57 318 375 7239</span>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#9993;</span>
+          <a href="mailto:contacto@brikss.com">contacto@brikss.com</a>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128205;</span>
+          <span>Cra. 15 #98 42 of 505, Bogota</span>
+        </div>
+      </div>
+      <div class="footer__section">
+        <h4>Siguenos</h4>
+        <div class="footer__social">
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p>&copy; 2025 BRIKSS Inmobiliaria. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/arriendo.js"></script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BRIKSS Forms - Formulario del comprador para gestion documental inmobiliaria">
+  <title>Comprador - BRIKSS Forms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a365d'/><text x='4' y='24' font-size='20' fill='%23ff6b35' font-weight='800'>B</text></svg>">
+  <style>
+    .pago-row { padding: 1rem; margin-bottom: 1rem; background: var(--brikss-gray-lighter, #edf2f7); border-radius: var(--radius-md, 12px); border-left: 3px solid var(--brikss-orange, #ff6b35); }
+    .pago-row .section-title { font-size: 0.9rem; margin-bottom: 0.75rem; border-bottom: none; padding-bottom: 0; }
+    .pago-row .form-row { margin-bottom: 0; }
+    #btnAgregarPago { width: 100%; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="header__inner">
+      <a href="index.html" class="header__logo" aria-label="BRIKSS - Inicio">
+        <img src="assets/logo-brikss.svg" alt="BRIKSS Logo" width="160" height="40">
+      </a>
+      <button class="header__menu-toggle" aria-label="Abrir menu" aria-expanded="false" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <nav class="header__nav" role="navigation" aria-label="Navegacion principal">
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Residencial</a>
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Comercial</a>
+        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Proyectos</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Form -->
+  <main class="form-container" role="main">
+    <div class="form-card">
+
+      <!-- Form Header -->
+      <div class="form-header">
+        <h2>Formulario Comprador</h2>
+        <p>Completa la informacion para tu proceso de compra de inmueble</p>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-bar" role="progressbar" aria-label="Progreso del formulario" aria-valuenow="1" aria-valuemin="1" aria-valuemax="3">
+        <div class="progress-bar__track">
+          <div class="progress-bar__line"></div>
+          <div class="progress-bar__fill" style="width: 0%"></div>
+          <div class="progress-bar__step active" aria-label="Paso 1">1</div>
+          <div class="progress-bar__step" aria-label="Paso 2">2</div>
+          <div class="progress-bar__step" aria-label="Paso 3">3</div>
+        </div>
+        <div class="progress-bar__labels">
+          <span class="progress-bar__label active">Datos Personales</span>
+          <span class="progress-bar__label">Documento</span>
+          <span class="progress-bar__label">Forma de Pago</span>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form id="compradorForm" novalidate>
+
+        <!-- Step 1: Datos Personales -->
+        <div class="form-step active" role="tabpanel" aria-label="Paso 1: Datos Personales">
+          <h3 class="form-step__title">Datos Personales</h3>
+
+          <!-- Fecha Formulario -->
+          <div class="form-group">
+            <label class="form-label" for="fechaFormulario">Fecha Formulario</label>
+            <input type="text" id="fechaFormulario" class="form-input" readonly aria-label="Fecha del formulario">
+          </div>
+
+          <!-- Nombre + Cedula -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="nombre">Nombre Completo <span class="required">*</span></label>
+              <input type="text" id="nombre" class="form-input" required data-validate="required" placeholder="Nombre y apellidos" aria-required="true">
+              <div class="form-error" role="alert"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cedula">Cedula <span class="required">*</span></label>
+              <input type="text" id="cedula" class="form-input" required data-validate="cedula" placeholder="Numero de cedula" aria-required="true">
+              <div class="form-error" role="alert"></div>
+            </div>
+          </div>
+
+          <!-- Celular + Email -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="celular">Celular <span class="required">*</span></label>
+              <input type="tel" id="celular" class="form-input" required data-validate="celular" placeholder="+57 315 857 4462" aria-required="true">
+              <div class="form-error" role="alert"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">Email <span class="required">*</span></label>
+              <input type="email" id="email" class="form-input" required data-validate="email" placeholder="correo@ejemplo.com" aria-required="true">
+              <div class="form-error" role="alert"></div>
+            </div>
+          </div>
+
+          <!-- Direccion + Ciudad -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="direccion">Direccion del Inmueble <span class="required">*</span></label>
+              <input type="text" id="direccion" class="form-input" required data-validate="required" placeholder="Direccion completa" aria-required="true">
+              <div class="form-error" role="alert"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ciudad">Ciudad <span class="required">*</span></label>
+              <input type="text" id="ciudad" class="form-input" required data-validate="required" placeholder="Ciudad" aria-required="true">
+              <div class="form-error" role="alert"></div>
+            </div>
+          </div>
+
+          <!-- Estado Civil -->
+          <div class="form-group">
+            <label class="form-label">Estado Civil <span class="required">*</span></label>
+            <div class="radio-group" data-radio-required="estadoCivil" role="radiogroup" aria-label="Estado civil">
+              <label class="radio-option">
+                <input type="radio" name="estadoCivil" value="Soltero/a"> Soltero/a
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="estadoCivil" value="Casado/a"> Casado/a
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="estadoCivil" value="Viudo/a"> Viudo/a
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="estadoCivil" value="Union Libre"> Union Libre
+              </label>
+            </div>
+          </div>
+
+          <!-- Genero -->
+          <div class="form-group">
+            <label class="form-label">Genero</label>
+            <div class="radio-group" role="radiogroup" aria-label="Genero">
+              <label class="radio-option">
+                <input type="radio" name="genero" value="Femenino"> Femenino
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="genero" value="Masculino"> Masculino
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="genero" value="Otro"> Otro
+              </label>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="form-nav">
+            <div></div>
+            <button type="button" class="btn btn-primary" data-action="next" aria-label="Siguiente paso">
+              Siguiente
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: Documento de Identidad -->
+        <div class="form-step" role="tabpanel" aria-label="Paso 2: Documento de Identidad">
+          <h3 class="form-step__title">Adjuntar Cedula del Comprador</h3>
+
+          <div class="upload-zone" id="uploadCedula">
+            <input type="file" accept=".pdf" aria-label="Subir cedula PDF">
+            <div class="upload-zone__icon" aria-hidden="true">&#128196;</div>
+            <div class="upload-zone__text">Arrastra tu archivo aqui</div>
+            <div class="upload-zone__hint">o haz clic para seleccionar - Solo archivos PDF (max. 10MB)</div>
+            <div class="upload-zone__file-info">
+              <span aria-hidden="true">&#128206;</span>
+              <span class="file-name"></span>
+              <span class="file-size"></span>
+              <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="form-nav">
+            <button type="button" class="btn btn-secondary" data-action="prev" aria-label="Paso anterior">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              Anterior
+            </button>
+            <button type="button" class="btn btn-primary" data-action="next" aria-label="Siguiente paso">
+              Siguiente
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Forma de Pago -->
+        <div class="form-step" role="tabpanel" aria-label="Paso 3: Forma de Pago">
+          <h3 class="form-step__title">Forma de Pago</h3>
+
+          <!-- Forma de Pago -->
+          <div class="form-group">
+            <label class="form-label" for="formaPago">Forma de Pago <span class="required">*</span></label>
+            <select id="formaPago" class="form-select" required aria-required="true">
+              <option value="">Selecciona una opcion</option>
+              <option value="Compra de Contado">Compra de Contado</option>
+              <option value="Compra con leasing nuevo banco">Compra con leasing nuevo banco</option>
+              <option value="Compra con leasing cesion banco vigente">Compra con leasing cesion banco vigente</option>
+              <option value="Compra con credito hipotecario">Compra con credito hipotecario</option>
+            </select>
+            <div class="form-error" role="alert"></div>
+          </div>
+
+          <!-- Pagos dinamicos -->
+          <div id="pagosContainer">
+            <div class="pago-row" data-pago="1">
+              <p class="section-title"><span class="section-title__icon">&#128176;</span> Pago 1</p>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Fecha de Pago <span class="required">*</span></label>
+                  <input type="date" class="form-input pago-fecha" required data-validate="futureDate">
+                  <div class="form-error" role="alert"></div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Monto <span class="required">*</span></label>
+                  <input type="text" class="form-input pago-monto" required data-validate="money" placeholder="$ 0">
+                  <div class="form-hint">COP</div>
+                  <div class="form-error" role="alert"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" id="btnAgregarPago" class="btn btn-secondary mt-sm" style="display:none;">
+            + Agregar otro pago
+          </button>
+
+          <!-- Navigation -->
+          <div class="form-nav">
+            <button type="button" class="btn btn-secondary" data-action="prev" aria-label="Paso anterior">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              Anterior
+            </button>
+            <button type="button" class="btn btn-success btn-lg" data-action="submit" aria-label="Enviar documentos del comprador">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Enviar Documentos
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <div class="footer__section">
+        <h4>BRIKSS</h4>
+        <ul>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Publica un inmueble</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Unete al equipo</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Conocenos</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Blog</a></li>
+        </ul>
+      </div>
+      <div class="footer__section">
+        <h4>Contacto</h4>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128222;</span>
+          <span>+57 315 857 4462</span>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128222;</span>
+          <span>+57 318 375 7239</span>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#9993;</span>
+          <a href="mailto:contacto@brikss.com">contacto@brikss.com</a>
+        </div>
+        <div class="footer__contact-item">
+          <span aria-hidden="true">&#128205;</span>
+          <span>Cra. 15 #98 42 of 505, Bogota</span>
+        </div>
+      </div>
+      <div class="footer__section">
+        <h4>Siguenos</h4>
+        <div class="footer__social">
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p>&copy; 2025 BRIKSS Inmobiliaria. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/comprador.js"></script>
+</body>
+</html>
