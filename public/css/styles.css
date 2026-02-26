@@ -6,12 +6,12 @@
 /* ── Variables de diseno ──────────────────────────────────── */
 :root {
   /* Colores BRIKSS */
-  --brikss-navy: #1a365d;
-  --brikss-navy-light: #2a4a7f;
-  --brikss-navy-dark: #0f2440;
-  --brikss-orange: #ff6b35;
-  --brikss-orange-light: #ff8a5c;
-  --brikss-orange-dark: #e55a2b;
+  --brikss-navy: #171735;
+  --brikss-navy-light: #1e1e4a;
+  --brikss-navy-dark: #0e0e22;
+  --brikss-orange: #1900FE;
+  --brikss-orange-light: #4d3aff;
+  --brikss-orange-dark: #1400d4;
   --brikss-light: #f7fafc;
   --brikss-gray: #718096;
   --brikss-gray-light: #e2e8f0;
@@ -21,7 +21,7 @@
   --brikss-success: #38a169;
   --brikss-error: #e53e3e;
   --brikss-warning: #d69e2e;
-  --brikss-info: #3182ce;
+  --brikss-info: #1900FE;
 
   /* Sombras */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
@@ -210,7 +210,7 @@ h3 { font-size: var(--font-size-xl); }
   width: 600px;
   height: 600px;
   border-radius: 50%;
-  background: rgba(255, 107, 53, 0.08);
+  background: rgba(25, 0, 254, 0.08);
   pointer-events: none;
 }
 
@@ -235,14 +235,14 @@ h3 { font-size: var(--font-size-xl); }
 
 .hero__badge {
   display: inline-block;
-  background: rgba(255, 107, 53, 0.2);
-  color: var(--brikss-orange-light);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
   padding: 0.4rem 1.2rem;
   border-radius: 50px;
   font-size: var(--font-size-sm);
   font-weight: 600;
   margin-bottom: var(--space-sm);
-  border: 1px solid rgba(255, 107, 53, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .hero h1 {
@@ -538,7 +538,7 @@ h3 { font-size: var(--font-size-xl); }
   background: var(--brikss-orange);
   border-color: var(--brikss-orange);
   color: var(--brikss-white);
-  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.2);
+  box-shadow: 0 0 0 4px rgba(25, 0, 254, 0.2);
 }
 
 .progress-bar__step.completed {
@@ -641,7 +641,7 @@ h3 { font-size: var(--font-size-xl); }
 .form-select:focus,
 .form-textarea:focus {
   border-color: var(--brikss-navy);
-  box-shadow: 0 0 0 3px rgba(26, 54, 93, 0.1);
+  box-shadow: 0 0 0 3px rgba(23, 23, 53, 0.1);
 }
 
 .form-input.is-valid {
@@ -731,7 +731,7 @@ h3 { font-size: var(--font-size-xl); }
 .radio-option.selected,
 .checkbox-option.selected {
   border-color: var(--brikss-orange);
-  background: rgba(255, 107, 53, 0.05);
+  background: rgba(25, 0, 254, 0.05);
 }
 
 /* ── Zona de carga de archivos (drag & drop) ──────────────── */
@@ -753,7 +753,7 @@ h3 { font-size: var(--font-size-xl); }
 
 .upload-zone.dragover {
   border-color: var(--brikss-orange);
-  background: rgba(255, 107, 53, 0.05);
+  background: rgba(25, 0, 254, 0.05);
   transform: scale(1.01);
 }
 
@@ -859,13 +859,13 @@ h3 { font-size: var(--font-size-xl); }
 .btn-primary {
   background: var(--brikss-orange);
   color: var(--brikss-white);
-  box-shadow: 0 4px 14px rgba(255, 107, 53, 0.35);
+  box-shadow: 0 4px 14px rgba(25, 0, 254, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--brikss-orange-dark);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+  box-shadow: 0 6px 20px rgba(25, 0, 254, 0.35);
 }
 
 .btn-secondary {

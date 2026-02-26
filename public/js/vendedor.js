@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     'uploadBancaria',
     'uploadCedula',
     'uploadRut',
-    'uploadPazSalvo',
     'uploadParqueadero',
     'uploadDeposito'
   ];
@@ -104,8 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
       uploadTradicion: 'Certificado de Tradicion y Libertad',
       uploadBancaria: 'Certificacion Bancaria',
       uploadCedula: 'Cedula del Vendedor',
-      uploadRut: 'RUT',
-      uploadPazSalvo: 'Paz y Salvo de Administracion'
+      uploadRut: 'RUT'
     };
 
     const missingFiles = [];
@@ -151,8 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tradicion: uploadZones.uploadTradicion.getFile(),
       bancaria: uploadZones.uploadBancaria.getFile(),
       cedula: uploadZones.uploadCedula.getFile(),
-      rut: uploadZones.uploadRut.getFile(),
-      pazSalvo: uploadZones.uploadPazSalvo.getFile()
+      rut: uploadZones.uploadRut.getFile()
     };
 
     // Archivos opcionales

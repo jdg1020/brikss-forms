@@ -4,10 +4,11 @@ Sistema de gestion documental para BRIKSS Inmobiliaria. Permite a compradores, v
 
 ## Caracteristicas
 
-- **3 flujos completos**: Comprador (3 pasos), Vendedor (8 pasos), Arriendo (6 pasos)
+- **3 flujos completos**: Comprador (3 pasos), Vendedor (6 pasos), Arriendo (6 pasos)
 - **Drag & Drop** para archivos PDF
 - **Validacion en tiempo real** de todos los campos
 - **Subida a Google Drive** automatica con estructura de carpetas
+- **Registro centralizado en Google Sheets** de todos los formularios
 - **Emails de confirmacion** HTML estilizados
 - **Diseno responsive** mobile-first
 - **Accesibilidad** con ARIA labels y navegacion por teclado
@@ -42,34 +43,81 @@ npm start
 
 El servidor estara disponible en `http://localhost:3000`
 
-## Configuracion de Google Drive API
+## Configuracion de Google APIs (Drive + Sheets)
+
+Se usa una **Cuenta de Servicio (Service Account)** para conectar con Google Drive y Sheets. Este metodo no expira y no requiere flujo OAuth interactivo.
+
+### Paso 1: Crear proyecto en Google Cloud
 
 1. Ve a [Google Cloud Console](https://console.cloud.google.com/)
-2. Crea un nuevo proyecto o selecciona uno existente
-3. Habilita la **Google Drive API**
-4. Ve a **Credenciales** > **Crear credenciales** > **ID de cliente OAuth 2.0**
-5. Tipo: Aplicacion web
-6. URI de redireccionamiento: `http://localhost:3000/oauth2callback`
-7. Copia el Client ID y Client Secret al archivo `.env`
+2. Haz clic en **Seleccionar proyecto** > **Nuevo proyecto**
+3. Nombre: `BRIKSS Forms` > **Crear**
+4. Asegurate de que el proyecto quede seleccionado en la barra superior
 
-### Obtener el Refresh Token
+### Paso 2: Habilitar las APIs necesarias
+
+1. Ve al menu hamburguesa > **APIs y servicios** > **Biblioteca**
+2. Busca y habilita estas dos APIs:
+   - **Google Drive API** — clic en **Habilitar**
+   - **Google Sheets API** — clic en **Habilitar**
+
+### Paso 3: Crear Cuenta de Servicio
+
+1. Ve a **APIs y servicios** > **Credenciales**
+2. Haz clic en **Crear credenciales** > **Cuenta de servicio**
+3. Nombre: `brikss-forms-server`
+4. Haz clic en **Crear y continuar**
+5. En **Rol**, puedes dejarlo vacio (no necesita roles de proyecto) > **Continuar** > **Listo**
+
+### Paso 4: Descargar clave JSON
+
+1. En la lista de cuentas de servicio, haz clic en la que acabas de crear
+2. Ve a la pestana **Claves**
+3. Haz clic en **Agregar clave** > **Crear clave nueva**
+4. Formato: **JSON** > **Crear**
+5. Se descargara un archivo `.json` — **guardalo como `service-account.json`** en la raiz del proyecto (`brikss-forms/service-account.json`)
+
+> **IMPORTANTE**: Este archivo contiene credenciales privadas. Nunca lo subas a Git. Ya esta incluido en `.gitignore`.
+
+### Paso 5: Crear carpeta raiz en Google Drive
+
+1. Ve a [Google Drive](https://drive.google.com/)
+2. Crea una carpeta llamada **"BRIKSS Forms"**
+3. Abre la carpeta
+4. **Comparte la carpeta** con el email de la cuenta de servicio:
+   - Haz clic derecho > **Compartir**
+   - Pega el email de la cuenta de servicio (tiene formato `brikss-forms-server@tu-proyecto.iam.gserviceaccount.com`)
+   - Dale permisos de **Editor**
+5. En la URL veras: `https://drive.google.com/drive/folders/XXXXXXXXX`
+6. Copia el ID (la parte `XXXXXXXXX`) al campo `GOOGLE_DRIVE_FOLDER_ID` en `.env`
+
+### Paso 6: Crear el Google Sheet centralizado
+
+1. Ve a [Google Sheets](https://sheets.google.com/) y crea un nuevo spreadsheet
+2. Nombralo **"BRIKSS Forms - Registro"**
+3. **Comparte el spreadsheet** con el email de la cuenta de servicio:
+   - Haz clic en **Compartir**
+   - Pega el mismo email de la cuenta de servicio
+   - Dale permisos de **Editor**
+4. En la URL veras: `https://docs.google.com/spreadsheets/d/XXXXXXXXX/edit`
+5. Copia el ID (la parte `XXXXXXXXX`) al campo `GOOGLE_SHEET_ID` en `.env`
+6. Los encabezados se crearan automaticamente al recibir el primer formulario
+
+### Paso 7: Configurar el archivo .env
 
 ```bash
-# Usa el OAuth Playground de Google:
-# https://developers.google.com/oauthplayground/
-
-# 1. Configura el engranaje (settings) con tu Client ID y Secret
-# 2. En Step 1, selecciona "Drive API v3" > todos los scopes
-# 3. Autoriza y obtiene el refresh token en Step 2
-# 4. Copia el refresh token al .env
+cp .env.example .env
 ```
 
-### Crear la carpeta raiz en Drive
+Abre `.env` y llena estos campos:
 
-1. Crea una carpeta "BRIKSS Forms" en tu Google Drive
-2. Copia el ID de la carpeta (de la URL) al campo `DRIVE_FOLDER_ID` en `.env`
+```
+GOOGLE_SERVICE_ACCOUNT_KEY_FILE=./service-account.json
+GOOGLE_DRIVE_FOLDER_ID=id_carpeta_brikss_forms
+GOOGLE_SHEET_ID=id_spreadsheet_aqui
+```
 
-> Si no configuras Google Drive, los archivos se guardan localmente en `uploads/`
+> Si no configuras las credenciales de Google, los archivos se guardan localmente en `uploads/` y los datos se imprimen en la consola del servidor.
 
 ## Configuracion de Email
 
@@ -89,7 +137,7 @@ brikss-forms/
 ├── public/                    # Archivos estaticos (frontend)
 │   ├── index.html             # Pagina principal
 │   ├── comprador.html         # Flujo comprador (3 pasos)
-│   ├── vendedor.html          # Flujo vendedor (8 pasos)
+│   ├── vendedor.html          # Flujo vendedor (6 pasos)
 │   ├── arriendo.html          # Flujo arriendo (6 pasos)
 │   ├── css/styles.css         # Estilos BRIKSS
 │   ├── js/
@@ -102,7 +150,7 @@ brikss-forms/
 │   ├── index.js               # Servidor Express
 │   ├── routes/                # Rutas API
 │   ├── controllers/           # Controladores
-│   ├── services/              # Servicios (Drive, Email)
+│   ├── services/              # Servicios (Drive, Sheets, Email)
 │   └── config/                # Configuraciones
 ├── uploads/                   # Archivos temporales
 ├── package.json
@@ -124,27 +172,42 @@ brikss-forms/
 ```
 BRIKSS Forms/
 ├── Compradores/
-│   └── COMP-20260217-001_Juan_Perez/
+│   └── Juan Perez - COMP-20260226-001/
 │       ├── formulario.json
 │       ├── cedula.pdf
 │       └── metadata.json
 ├── Vendedores/
-│   └── VEND-20260217-001_Maria_Lopez/
+│   └── Maria Lopez - VEND-20260226-001/
 │       ├── formulario.json
+│       ├── tradicion.pdf
+│       ├── bancaria.pdf
 │       ├── cedula.pdf
-│       ├── certificado_tradicion.pdf
-│       ├── certificacion_bancaria.pdf
 │       ├── rut.pdf
-│       ├── paz_salvo.pdf
 │       └── metadata.json
 └── Arriendos/
-    └── ARR-20260217-001_Pedro-Ana/
+    └── Pedro Garcia - Ana Torres - ARR-20260226-001/
         ├── formulario.json
-        ├── cedula_arrendador.pdf
-        ├── cedula_arrendatario.pdf
-        ├── certificado_tradicion.pdf
+        ├── cedulaArrendador.pdf
+        ├── cedulaArrendatario.pdf
+        ├── tradicion.pdf
         └── metadata.json
 ```
+
+## Google Sheets - Registro Centralizado
+
+Todos los formularios se registran en un solo Google Sheet con las siguientes columnas:
+
+| Columna | Descripcion |
+|---------|-------------|
+| Fecha | Fecha y hora del envio |
+| Tipo | Comprador, Vendedor o Arriendo |
+| ID Referencia | COMP-20260226-001, VEND-..., ARR-... |
+| Nombre Completo | Nombre de quien envia |
+| Cedula, Celular, Email | Datos de contacto |
+| Datos del inmueble | Direccion, ciudad, edificio, etc. |
+| Datos de arriendo | Arrendador, arrendatario, canon, duracion |
+| Carpeta Drive | Link directo a la carpeta en Google Drive |
+| Documentos Subidos | Lista de PDFs recibidos |
 
 ## Licencia
 

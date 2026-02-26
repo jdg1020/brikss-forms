@@ -46,20 +46,20 @@ class EmailService {
   <style>
     body { font-family: 'Inter', 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background: #f7fafc; }
     .container { max-width: 600px; margin: 0 auto; background: #ffffff; }
-    .header { background: linear-gradient(135deg, #1a365d, #2a4a7f); color: white; padding: 2rem; text-align: center; }
+    .header { background: linear-gradient(135deg, #171735, #1e1e4a); color: white; padding: 2rem; text-align: center; }
     .header h1 { margin: 0; font-size: 1.8rem; letter-spacing: -0.02em; }
     .header p { margin: 0.5rem 0 0; opacity: 0.8; font-size: 0.9rem; }
     .content { padding: 2rem; }
-    .content h2 { color: #1a365d; font-size: 1.3rem; margin-top: 0; }
+    .content h2 { color: #171735; font-size: 1.3rem; margin-top: 0; }
     .content p { color: #4a5568; line-height: 1.7; }
-    .details { background: #f7fafc; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border-left: 4px solid #ff6b35; }
+    .details { background: #f7fafc; border-radius: 12px; padding: 1.5rem; margin: 1.5rem 0; border-left: 4px solid #1900FE; }
     .details-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e2e8f0; }
     .details-row:last-child { border-bottom: none; }
     .details-label { color: #718096; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
     .details-value { color: #2d3748; font-weight: 600; }
-    .button { display: inline-block; background: #ff6b35; color: white; padding: 0.875rem 2rem; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 1rem; margin-top: 1rem; }
-    .footer { background: #1a365d; color: rgba(255,255,255,0.7); padding: 1.5rem 2rem; text-align: center; font-size: 0.8rem; }
-    .footer a { color: #ff6b35; text-decoration: none; }
+    .button { display: inline-block; background: #1900FE; color: white; padding: 0.875rem 2rem; text-decoration: none; border-radius: 12px; font-weight: 600; font-size: 1rem; margin-top: 1rem; }
+    .footer { background: #171735; color: rgba(255,255,255,0.7); padding: 1.5rem 2rem; text-align: center; font-size: 0.8rem; }
+    .footer a { color: #1900FE; text-decoration: none; }
     .footer p { margin: 0.25rem 0; }
   </style>
 </head>

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a365d'/><text x='4' y='24' font-size='20' fill='%23ff6b35' font-weight='800'>B</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23171735'/><text x='4' y='24' font-size='20' fill='%231900FE' font-weight='800'>B</text></svg>">
 </head>
 <body>
   <!-- Header -->
@@ -24,9 +24,9 @@
         <span></span>
       </button>
       <nav class="header__nav" role="navigation" aria-label="Navegacion principal">
-        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Residencial</a>
-        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Comercial</a>
-        <a href="https://www.brikss.com/" target="_blank" rel="noopener">Proyectos</a>
+        <a href="https://www.brikss.com/residencial/bogota/inmuebles-venta" target="_blank" rel="noopener">Residencial</a>
+        <a href="https://www.brikss.com/comercial/bogota/inmuebles-venta" target="_blank" rel="noopener">Comercial</a>
+        <a href="https://www.brikss.com/proyectos" target="_blank" rel="noopener">Proyectos</a>
       </nav>
     </div>
   </header>
@@ -52,7 +52,6 @@
           <div class="progress-bar__step">4</div>
           <div class="progress-bar__step">5</div>
           <div class="progress-bar__step">6</div>
-          <div class="progress-bar__step">7</div>
         </div>
         <div class="progress-bar__labels">
           <span class="progress-bar__label active">Datos</span>
@@ -60,7 +59,6 @@
           <span class="progress-bar__label">Bancaria</span>
           <span class="progress-bar__label">Cedula</span>
           <span class="progress-bar__label">RUT</span>
-          <span class="progress-bar__label">Paz y Salvo</span>
           <span class="progress-bar__label">Extras</span>
         </div>
       </div>
@@ -274,31 +272,7 @@
           </div>
         </div>
 
-        <!-- STEP 6: Paz y Salvo de Administracion -->
-        <div class="form-step">
-          <h3 class="form-step__title">Paz y Salvo de Administracion</h3>
-          <p class="text-gray mb-sm">Sube el certificado de Paz y Salvo expedido por la administracion del edificio o conjunto.</p>
-
-          <div class="upload-zone" id="uploadPazSalvo">
-            <input type="file" accept=".pdf" name="pazSalvo">
-            <div class="upload-zone__icon">&#9989;</div>
-            <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
-            <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
-            <div class="upload-zone__file-info">
-              <span class="file-name"></span>
-              <span class="file-size"></span>
-              <button type="button" class="upload-zone__remove" aria-label="Eliminar archivo">&times;</button>
-            </div>
-          </div>
-
-          <!-- Navigation -->
-          <div class="form-nav">
-            <button type="button" class="btn btn-secondary" data-action="prev">Anterior</button>
-            <button type="button" class="btn btn-primary" data-action="next">Siguiente</button>
-          </div>
-        </div>
-
-        <!-- STEP 7: Parqueadero / Deposito -->
+        <!-- STEP 6: Parqueadero / Deposito -->
         <div class="form-step">
           <h3 class="form-step__title">Parqueadero y Deposito</h3>
           <p class="text-gray mb-sm">Si aplica, sube los certificados de parqueadero y/o deposito asociados al inmueble.</p>

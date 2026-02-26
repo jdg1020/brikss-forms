@@ -1,6 +1,6 @@
 /**
  * Servicio de Google Drive para BRIKSS Forms
- * Sube archivos y datos de formularios a Google Drive
+ * Usa OAuth2 para subir archivos (las Service Accounts no tienen cuota de almacenamiento)
  */
 
 const { google } = require('googleapis');
@@ -14,27 +14,31 @@ class GoogleDriveService {
   }
 
   /**
-   * Inicializar cliente de Google Drive con credenciales OAuth2
+   * Inicializar cliente de Google Drive con OAuth2
    */
   init() {
     if (this.initialized) return;
 
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-    const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI || 'https://developers.google.com/oauthplayground';
     const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
 
     if (!clientId || !clientSecret || !refreshToken) {
-      console.warn('[Drive] Credenciales de Google Drive no configuradas. Los archivos se guardaran solo localmente.');
+      console.warn('[Drive] Credenciales OAuth2 no configuradas (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN). Los archivos se guardaran solo localmente.');
       return;
     }
 
-    const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
-    oauth2Client.setCredentials({ refresh_token: refreshToken });
+    try {
+      const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, redirectUri);
+      oauth2Client.setCredentials({ refresh_token: refreshToken });
 
-    this.drive = google.drive({ version: 'v3', auth: oauth2Client });
-    this.initialized = true;
-    console.log('[Drive] Servicio de Google Drive inicializado');
+      this.drive = google.drive({ version: 'v3', auth: oauth2Client });
+      this.initialized = true;
+      console.log('[Drive] Servicio de Google Drive inicializado (OAuth2)');
+    } catch (err) {
+      console.error('[Drive] Error al inicializar OAuth2:', err.message);
+    }
   }
 
   /**
@@ -61,7 +65,6 @@ class GoogleDriveService {
   async findOrCreateFolder(name, parentId) {
     if (!this.drive) return null;
 
-    // Buscar si existe
     const query = `name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false${parentId ? ` and '${parentId}' in parents` : ''}`;
     const list = await this.drive.files.list({
       q: query,
@@ -135,7 +138,7 @@ class GoogleDriveService {
       return this.saveLocally(tipoFolder, expedienteName, formData, files);
     }
 
-    const rootFolderId = process.env.DRIVE_FOLDER_ID;
+    const rootFolderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
 
     // Crear/buscar carpeta del tipo (Compradores, Vendedores, Arriendos)
     const tipoFolderObj = await this.findOrCreateFolder(tipoFolder, rootFolderId);
@@ -189,13 +192,11 @@ class GoogleDriveService {
     const localDir = path.join(__dirname, '..', '..', 'uploads', tipoFolder, expedienteName);
     fs.mkdirSync(localDir, { recursive: true });
 
-    // Guardar datos del formulario
     fs.writeFileSync(
       path.join(localDir, 'formulario.json'),
       JSON.stringify(formData, null, 2)
     );
 
-    // Copiar archivos
     const metadata = {
       fechaCreacion: new Date().toISOString(),
       tipo: tipoFolder,

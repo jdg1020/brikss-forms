@@ -8,6 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const googleDriveService = require('../services/googleDrive.service');
+const googleSheetsService = require('../services/googleSheets.service');
 const emailService = require('../services/email.service');
 
 // Configuracion de multer para archivos temporales
@@ -43,6 +44,11 @@ function generateRefId(prefix) {
   const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
   const seq = String(Math.floor(Math.random() * 999) + 1).padStart(3, '0');
   return `${prefix}-${date}-${seq}`;
+}
+
+// Generar URL de carpeta en Drive
+function getDriveFolderUrl(folderId) {
+  return folderId ? `https://drive.google.com/drive/folders/${folderId}` : '';
 }
 
 // Limpiar archivos temporales
@@ -81,8 +87,8 @@ async function processComprador(req, res, next) {
       });
     }
 
-    // Nombre de carpeta para Google Drive
-    const folderName = `${refId}_${data.nombre.replace(/\s+/g, '_')}`;
+    // Nombre de carpeta: "Nombre Completo - COMP-20260226-001"
+    const folderName = `${data.nombre.trim()} - ${refId}`;
 
     // Subir a Google Drive
     let driveResult = null;
@@ -95,6 +101,16 @@ async function processComprador(req, res, next) {
       );
     } catch (driveError) {
       console.warn('[Drive] No se pudo subir a Google Drive:', driveError.message);
+    }
+
+    // Registrar en Google Sheets
+    const driveFolderUrl = driveResult && driveResult.folderId
+      ? getDriveFolderUrl(driveResult.folderId)
+      : '';
+    try {
+      await googleSheetsService.logComprador(data, refId, driveFolderUrl);
+    } catch (sheetsError) {
+      console.warn('[Sheets] No se pudo registrar en Sheets:', sheetsError.message);
     }
 
     // Enviar email de confirmacion
@@ -141,7 +157,7 @@ async function processVendedor(req, res, next) {
       });
     }
 
-    const requiredFiles = ['tradicion', 'bancaria', 'cedula', 'rut', 'pazSalvo'];
+    const requiredFiles = ['tradicion', 'bancaria', 'cedula', 'rut'];
     const missingFiles = requiredFiles.filter(
       name => !req.files || !req.files[name] || req.files[name].length === 0
     );
@@ -154,7 +170,8 @@ async function processVendedor(req, res, next) {
       });
     }
 
-    const folderName = `${refId}_${data.nombre.replace(/\s+/g, '_')}`;
+    // Nombre de carpeta: "Nombre Completo - VEND-20260226-001"
+    const folderName = `${data.nombre.trim()} - ${refId}`;
 
     let driveResult = null;
     try {
@@ -166,6 +183,16 @@ async function processVendedor(req, res, next) {
       );
     } catch (driveError) {
       console.warn('[Drive] No se pudo subir a Google Drive:', driveError.message);
+    }
+
+    // Registrar en Google Sheets
+    const driveFolderUrl = driveResult && driveResult.folderId
+      ? getDriveFolderUrl(driveResult.folderId)
+      : '';
+    try {
+      await googleSheetsService.logVendedor(data, refId, driveFolderUrl);
+    } catch (sheetsError) {
+      console.warn('[Sheets] No se pudo registrar en Sheets:', sheetsError.message);
     }
 
     try {
@@ -223,9 +250,8 @@ async function processArriendo(req, res, next) {
       });
     }
 
-    const arrendadorClean = data.arrendadorNombre.replace(/\s+/g, '_');
-    const arrendatarioClean = data.arrendatarioNombre.replace(/\s+/g, '_');
-    const folderName = `${refId}_${arrendadorClean}-${arrendatarioClean}`;
+    // Nombre de carpeta: "Arrendador - Arrendatario - ARR-20260226-001"
+    const folderName = `${data.arrendadorNombre.trim()} - ${data.arrendatarioNombre.trim()} - ${refId}`;
 
     let driveResult = null;
     try {
@@ -237,6 +263,16 @@ async function processArriendo(req, res, next) {
       );
     } catch (driveError) {
       console.warn('[Drive] No se pudo subir a Google Drive:', driveError.message);
+    }
+
+    // Registrar en Google Sheets
+    const driveFolderUrl = driveResult && driveResult.folderId
+      ? getDriveFolderUrl(driveResult.folderId)
+      : '';
+    try {
+      await googleSheetsService.logArriendo(data, refId, driveFolderUrl);
+    } catch (sheetsError) {
+      console.warn('[Sheets] No se pudo registrar en Sheets:', sheetsError.message);
     }
 
     // Enviar email a ambas partes
@@ -281,7 +317,6 @@ const uploadVendedor = upload.fields([
   { name: 'bancaria', maxCount: 1 },
   { name: 'cedula', maxCount: 1 },
   { name: 'rut', maxCount: 1 },
-  { name: 'pazSalvo', maxCount: 1 },
   { name: 'parqueadero', maxCount: 1 },
   { name: 'deposito', maxCount: 1 }
 ]);
