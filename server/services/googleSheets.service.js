@@ -13,23 +13,34 @@ class GoogleSheetsService {
 
   /**
    * Inicializar cliente de Google Sheets con Service Account
+   * Soporta: archivo JSON local (GOOGLE_SERVICE_ACCOUNT_KEY_FILE)
+   *          o JSON inline como env var (GOOGLE_SERVICE_ACCOUNT_KEY)
    */
   init() {
     if (this.initialized) return;
 
     const keyFile = process.env.GOOGLE_SERVICE_ACCOUNT_KEY_FILE;
+    const keyJson = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
 
-    if (!keyFile) {
-      console.warn('[Sheets] GOOGLE_SERVICE_ACCOUNT_KEY_FILE no configurado. Los datos no se registraran en Sheets.');
+    if (!keyFile && !keyJson) {
+      console.warn('[Sheets] Service Account no configurado. Los datos no se registraran en Sheets.');
       return;
     }
 
     try {
-      const auth = new google.auth.GoogleAuth({
-        keyFile,
+      const authOptions = {
         scopes: ['https://www.googleapis.com/auth/spreadsheets']
-      });
+      };
 
+      if (keyJson) {
+        // Produccion: credenciales como variable de entorno (JSON string)
+        authOptions.credentials = JSON.parse(keyJson);
+      } else {
+        // Local: archivo JSON
+        authOptions.keyFile = keyFile;
+      }
+
+      const auth = new google.auth.GoogleAuth(authOptions);
       this.sheets = google.sheets({ version: 'v4', auth });
       this.initialized = true;
       console.log('[Sheets] Servicio de Google Sheets inicializado (Service Account)');
