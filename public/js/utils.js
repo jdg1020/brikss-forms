@@ -6,7 +6,7 @@
 /* ── Validaciones ─────────────────────────────────────────── */
 const Validators = {
   cedula: (value) => /^\d{6,10}$/.test(value.replace(/\s/g, '')),
-  celular: (value) => /^\+?57\s?\d{3}\s?\d{3}\s?\d{4}$/.test(value.replace(/\s/g, '')),
+  celular: (value) => /^(\+?57)?\s?\d{10}$/.test(value.replace(/[\s-]/g, '')),
   email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
   required: (value) => value !== null && value !== undefined && String(value).trim().length > 0,
   minLength: (value, min) => String(value).trim().length >= min,
@@ -31,7 +31,7 @@ const Validators = {
 // Mensajes de error en espanol
 const ErrorMessages = {
   cedula: 'Ingresa un numero de cedula valido (6-10 digitos)',
-  celular: 'Formato: +57 315 857 4462',
+  celular: 'Ingresa un numero de celular valido (10 digitos)',
   email: 'Ingresa un correo electronico valido',
   required: 'Este campo es obligatorio',
   minLength: (min) => `Minimo ${min} caracteres`,
