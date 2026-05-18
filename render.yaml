@@ -3,22 +3,41 @@ services:
     name: brikss-forms
     runtime: node
     plan: free
-    buildCommand: npm install
+    # autoDeploy=false: promovemos manualmente a prod desde el dashboard.
+    autoDeploy: false
+    # npm ci respeta package-lock y falla si hay drift (builds reproducibles).
+    buildCommand: npm ci
     startCommand: node server/index.js
+    healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
         value: production
+      # Service Account JSON inline (una sola credencial para Drive y Sheets).
+      # El folder de Drive debe estar en una Shared Drive y compartido con
+      # la cuenta de servicio como Content Manager — Service Account NO
+      # puede escribir en "Mi unidad" personal.
       - key: GOOGLE_SERVICE_ACCOUNT_KEY
-        sync: false
-      - key: GOOGLE_CLIENT_ID
-        sync: false
-      - key: GOOGLE_CLIENT_SECRET
-        sync: false
-      - key: GOOGLE_REDIRECT_URI
-        sync: false
-      - key: GOOGLE_REFRESH_TOKEN
         sync: false
       - key: GOOGLE_DRIVE_FOLDER_ID
         sync: false
       - key: GOOGLE_SHEET_ID
+        sync: false
+      # SMTP (Gmail app-password). Cap diario ~500 emails; migrar a SendGrid
+      # o dominio propio antes de escalar.
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: 587
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      # Email interno que recibe la notificación de cada submisión.
+      - key: INTERNAL_NOTIFICATION_EMAIL
+        sync: false
+      # CORS allow-list. Para same-origin del propio Render con un único
+      # subdominio, basta con la URL del servicio.
+      - key: FRONTEND_URL
         sync: false
