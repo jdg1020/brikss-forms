@@ -98,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── 8. Submit handler ──────────────────────────────────── */
   async function handleSubmit() {
-    // Validar archivos requeridos
     const requiredUploads = {
       uploadTradicion: 'Certificado de Tradicion y Libertad',
       uploadBancaria: 'Certificacion Bancaria',
@@ -117,9 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (missingFiles.length > 0) {
-      hideLoading();
-      showToast(`Faltan documentos obligatorios: ${missingFiles.join(', ')}`, 'error', 6000);
-      throw new Error('Documentos requeridos faltantes');
+      throw new Error(`Faltan documentos obligatorios: ${missingFiles.join(', ')}`);
     }
 
     // Recopilar datos del formulario
@@ -127,6 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const data = {
       tipo: 'Vendedor',
       fechaFormulario: fechaFormulario.value,
+      nombreBroker: document.getElementById('nombreBroker').value.trim(),
+      codigoInmueble: document.getElementById('codigoInmueble').value.trim(),
       nombre: document.getElementById('nombre').value.trim(),
       cedula: document.getElementById('cedula').value.trim(),
       celular: document.getElementById('celular').value.trim(),
@@ -140,8 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tieneParqueadero: tieneParqueadero.checked,
       numParqueadero: tieneParqueadero.checked ? document.getElementById('numParqueadero').value.trim() : '',
       tieneDeposito: tieneDeposito.checked,
-      numDeposito: tieneDeposito.checked ? document.getElementById('numDeposito').value.trim() : '',
-      refId: generateRefId('VEN')
+      numDeposito: tieneDeposito.checked ? document.getElementById('numDeposito').value.trim() : ''
     };
 
     // Construir FormData con archivos
@@ -162,14 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formData = buildFormData(data, files);
 
-    // Enviar al servidor
     const result = await submitForm('/api/vendedor', formData);
-
     hideLoading();
     showToast('Documentos enviados exitosamente', 'success');
     showConfirmation({
       tipo: 'Vendedor',
-      id: data.refId,
+      id: result.id,
       nombre: data.nombre
     });
   }

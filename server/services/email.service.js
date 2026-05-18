@@ -5,6 +5,7 @@
 
 const nodemailer = require('nodemailer');
 const emailConfig = require('../config/email.config');
+const { redactEmail } = require('../utils/redact');
 
 class EmailService {
   constructor() {
@@ -67,15 +68,15 @@ class EmailService {
   <div class="container">
     <div class="header">
       <h1>BRIKSS Inmobiliaria</h1>
-      <p>Gestion Documental</p>
+      <p>Gestión Documental</p>
     </div>
     <div class="content">
       <h2>Documentos Recibidos Exitosamente</h2>
       <p>Hola <strong>${nombre}</strong>,</p>
-      <p>Hemos recibido exitosamente tus documentos. Nuestro equipo los revisara y se pondra en contacto contigo a la brevedad.</p>
+      <p>Hemos recibido exitosamente tus documentos. Nuestro equipo los revisará y se pondrá en contacto contigo a la brevedad.</p>
       <div class="details">
         <div class="details-row">
-          <span class="details-label">Tipo de Tramite</span>
+          <span class="details-label">Tipo de Trámite</span>
           <span class="details-value">${tipo}</span>
         </div>
         <div class="details-row">
@@ -95,7 +96,7 @@ class EmailService {
     <div class="footer">
       <p><strong>BRIKSS Inmobiliaria</strong></p>
       <p>+57 315 857 4462 | <a href="mailto:contacto@brikss.com">contacto@brikss.com</a></p>
-      <p>Cra. 15 #98 42 of 505, Bogota</p>
+      <p>Cra. 15 #98 42 of 505, Bogotá</p>
       <p style="margin-top: 1rem;">&copy; 2025 BRIKSS. Todos los derechos reservados.</p>
     </div>
   </div>
@@ -110,8 +111,7 @@ class EmailService {
     this.init();
 
     if (!this.transporter) {
-      console.log(`[Email] Simulacion de envio a ${to}:`);
-      console.log(`  Tipo: ${tipo} | ID: ${id} | Nombre: ${nombre}`);
+      console.log(`[Email] (simulacion) ${tipo} ${id} -> ${redactEmail(to)}`);
       return { simulated: true };
     }
 
@@ -125,7 +125,7 @@ class EmailService {
       text: `Hola ${nombre},\n\nHemos recibido exitosamente tus documentos.\n\nTipo: ${tipo}\nID: ${id}\nFecha: ${fecha}\n\nNos pondremos en contacto pronto.\n\nBRIKSS Inmobiliaria\n+57 315 857 4462`
     });
 
-    console.log(`[Email] Confirmacion enviada a ${to}: ${info.messageId}`);
+    console.log(`[Email] Confirmacion ${id} -> ${redactEmail(to)} (${info.messageId})`);
     return info;
   }
 }

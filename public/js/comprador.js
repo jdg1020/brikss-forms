@@ -4,20 +4,13 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // ── Referencias a elementos del DOM ────────────────────────
   const fechaFormularioInput = document.getElementById('fechaFormulario');
   const uploadCedula = document.getElementById('uploadCedula');
 
-  // ── 1. Configurar fecha del formulario (hoy, solo lectura) ─
   fechaFormularioInput.value = getTodayFormatted();
-
-  // ── 2. Inicializar validaciones automaticas ────────────────
   initAutoValidation();
-
-  // ── 3. Configurar zona de carga de cedula ──────────────────
   setupUploadZone(uploadCedula);
 
-  // ── 4. Crear instancia del wizard de formulario ────────────
   const wizard = new FormWizard({
     formId: 'compradorForm',
     onSubmit: handleSubmit
@@ -29,16 +22,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnAgregarPago = document.getElementById('btnAgregarPago');
   let pagoCount = 1;
 
-  // Inicializar primer pago
   initPagoRow(pagosContainer.querySelector('.pago-row'));
 
-  // Mostrar/ocultar boton agregar segun forma de pago
   formaPagoSelect.addEventListener('change', () => {
     const isContado = formaPagoSelect.value === 'Compra de Contado';
     btnAgregarPago.style.display = isContado ? 'none' : 'block';
+    if (isContado) {
+      // Si el usuario había agregado pagos extra y cambia a Contado, dejamos
+      // sólo el primero para evitar enviar pagos huérfanos al server.
+      const extras = pagosContainer.querySelectorAll('.pago-row:not(:first-child)');
+      extras.forEach(row => row.remove());
+      pagoCount = 1;
+    }
   });
 
-  // Agregar nuevo pago
   btnAgregarPago.addEventListener('click', () => {
     pagoCount++;
     const newRow = document.createElement('div');
@@ -47,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     newRow.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <p class="section-title"><span class="section-title__icon">&#128176;</span> Pago ${pagoCount}</p>
-        <button type="button" class="upload-zone__remove" onclick="this.closest('.pago-row').remove()" aria-label="Eliminar pago" style="font-size:1.5rem;color:var(--brikss-error, #e53e3e);">&times;</button>
+        <button type="button" class="upload-zone__remove pago-row__remove" aria-label="Eliminar pago" style="font-size:1.5rem;color:var(--brikss-error, #e53e3e);">&times;</button>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -68,6 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Pago ' + pagoCount + ' agregado', 'info');
   });
 
+  // Event delegation: maneja eliminacion de cualquier .pago-row sin inline onclick (CSP-friendly).
+  pagosContainer.addEventListener('click', (event) => {
+    const removeBtn = event.target.closest('.pago-row__remove');
+    if (removeBtn) {
+      const row = removeBtn.closest('.pago-row');
+      if (row) row.remove();
+    }
+  });
+
   function initPagoRow(row) {
     const fechaInput = row.querySelector('.pago-fecha');
     const montoInput = row.querySelector('.pago-monto');
@@ -77,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupValidation(montoInput, 'money');
   }
 
-  // ── 5. Conectar botones de navegacion ──────────────────────
   document.querySelectorAll('[data-action]').forEach(btn => {
     btn.addEventListener('click', () => {
       const action = btn.dataset.action;
@@ -87,18 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── 6. Estilos de seleccion en radio buttons ──────────────
   document.querySelectorAll('input[type="radio"]').forEach(radio => {
     radio.addEventListener('change', () => {
-      // Limpiar seleccion previa del mismo grupo
       const groupName = radio.name;
       document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
         r.closest('.radio-option').classList.remove('selected');
       });
-      // Marcar opcion seleccionada
       radio.closest('.radio-option').classList.add('selected');
 
-      // Quitar estado invalido del grupo si lo tenia
       const radioGroup = radio.closest('[data-radio-required]');
       if (radioGroup) {
         radioGroup.classList.remove('is-invalid');
@@ -106,21 +107,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Funcion de envio del formulario ────────────────────────
   async function handleSubmit() {
-    // Validar que se haya subido la cedula
     if (!uploadCedula._file) {
-      hideLoading();
-      showToast('Debes adjuntar la cedula del comprador en formato PDF', 'error');
-      return;
+      throw new Error('Debes adjuntar la cedula del comprador en formato PDF');
     }
 
-    // Recopilar datos del formulario
     const estadoCivilRadio = document.querySelector('input[name="estadoCivil"]:checked');
     const generoRadio = document.querySelector('input[name="genero"]:checked');
 
     const data = {
       fechaFormulario: document.getElementById('fechaFormulario').value,
+      nombreBroker: document.getElementById('nombreBroker').value.trim(),
+      codigoInmueble: document.getElementById('codigoInmueble').value.trim(),
       nombre: document.getElementById('nombre').value.trim(),
       cedula: document.getElementById('cedula').value.trim(),
       celular: document.getElementById('celular').value.trim(),
@@ -133,31 +131,25 @@ document.addEventListener('DOMContentLoaded', () => {
       pagos: []
     };
 
-    // Recopilar todos los pagos
     document.querySelectorAll('.pago-row').forEach((row, i) => {
+      const montoStr = String(row.querySelector('.pago-monto').value || '').replace(/\D/g, '');
       data.pagos.push({
         numero: i + 1,
         fecha: row.querySelector('.pago-fecha').value,
-        monto: row.querySelector('.pago-monto').value
+        monto: montoStr ? parseInt(montoStr, 10) : 0
       });
     });
 
-    // Construir FormData con archivos adjuntos
     const formData = buildFormData(data, {
       cedula: uploadCedula._file
     });
 
-    try {
-      const result = await submitForm('/api/comprador', formData);
-      hideLoading();
-      showConfirmation({
-        tipo: 'Comprador',
-        id: result.id,
-        nombre: data.nombre
-      });
-    } catch (error) {
-      hideLoading();
-      showToast('Error al enviar los documentos: ' + error.message, 'error');
-    }
+    const result = await submitForm('/api/comprador', formData);
+    hideLoading();
+    showConfirmation({
+      tipo: 'Comprador',
+      id: result.id,
+      nombre: data.nombre
+    });
   }
 });

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="BRIKSS Forms - Formulario Vendedor para gestion documental inmobiliaria">
+  <meta name="description" content="BRIKSS Forms - Formulario Vendedor para gestión documental inmobiliaria">
   <title>BRIKSS Forms - Formulario Vendedor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,12 +18,12 @@
       <a href="/" class="header__logo" aria-label="BRIKSS - Inicio">
         <img src="assets/logo-brikss.svg" alt="BRIKSS Logo" width="160" height="40">
       </a>
-      <button class="header__menu-toggle" aria-label="Abrir menu" aria-expanded="false" onclick="toggleMenu()">
+      <button class="header__menu-toggle" aria-label="Abrir menú" aria-expanded="false" type="button">
         <span></span>
         <span></span>
         <span></span>
       </button>
-      <nav class="header__nav" role="navigation" aria-label="Navegacion principal">
+      <nav class="header__nav" role="navigation" aria-label="Navegación principal">
         <a href="https://www.brikss.com/residencial/bogota/inmuebles-venta" target="_blank" rel="noopener">Residencial</a>
         <a href="https://www.brikss.com/comercial/bogota/inmuebles-venta" target="_blank" rel="noopener">Comercial</a>
         <a href="https://www.brikss.com/proyectos" target="_blank" rel="noopener">Proyectos</a>
@@ -55,9 +55,9 @@
         </div>
         <div class="progress-bar__labels">
           <span class="progress-bar__label active">Datos</span>
-          <span class="progress-bar__label">Tradicion</span>
+          <span class="progress-bar__label">Tradición</span>
           <span class="progress-bar__label">Bancaria</span>
-          <span class="progress-bar__label">Cedula</span>
+          <span class="progress-bar__label">Cédula</span>
           <span class="progress-bar__label">RUT</span>
           <span class="progress-bar__label">Extras</span>
         </div>
@@ -66,9 +66,9 @@
       <!-- Form -->
       <form id="vendedorForm" novalidate>
 
-        <!-- STEP 1: Datos Basicos -->
+        <!-- STEP 1: Datos Básicos -->
         <div class="form-step active">
-          <h3 class="form-step__title">Datos Basicos del Vendedor</h3>
+          <h3 class="form-step__title">Datos Básicos del Vendedor</h3>
 
           <!-- Fecha Formulario -->
           <div class="form-group">
@@ -76,7 +76,21 @@
             <input type="text" id="fechaFormulario" class="form-input" readonly>
           </div>
 
-          <!-- Nombre + Cedula -->
+          <!-- Broker + Código del Inmueble -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="nombreBroker">Nombre del Broker <span class="required">*</span></label>
+              <input type="text" id="nombreBroker" class="form-input" required data-validate="required" placeholder="Nombre del broker">
+              <span class="form-error"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="codigoInmueble">Código del Inmueble <span class="required">*</span></label>
+              <input type="text" id="codigoInmueble" class="form-input" required data-validate="required" placeholder="Código del inmueble">
+              <span class="form-error"></span>
+            </div>
+          </div>
+
+          <!-- Nombre + Cédula -->
           <div class="form-row">
             <div class="form-group">
               <label class="form-label" for="nombre">Nombre del Vendedor <span class="required">*</span></label>
@@ -84,7 +98,7 @@
               <span class="form-error"></span>
             </div>
             <div class="form-group">
-              <label class="form-label" for="cedula">Cedula <span class="required">*</span></label>
+              <label class="form-label" for="cedula">Cédula <span class="required">*</span></label>
               <input type="text" id="cedula" class="form-input" required data-validate="cedula" placeholder="Ej: 1234567890">
               <span class="form-error"></span>
             </div>
@@ -104,7 +118,7 @@
             </div>
           </div>
 
-          <!-- Edificio + Numero Inmueble -->
+          <!-- Edificio + Número Inmueble -->
           <div class="form-row">
             <div class="form-group">
               <label class="form-label" for="edificio">Nombre Edificio o Conjunto <span class="required">*</span></label>
@@ -112,22 +126,22 @@
               <span class="form-error"></span>
             </div>
             <div class="form-group">
-              <label class="form-label" for="numeroInmueble">Numero del apartamento o casa <span class="required">*</span></label>
+              <label class="form-label" for="numeroInmueble">Número del apartamento o casa <span class="required">*</span></label>
               <input type="text" id="numeroInmueble" class="form-input" required data-validate="required" placeholder="Ej: Apto 301">
               <span class="form-error"></span>
             </div>
           </div>
 
-          <!-- Direccion + Ciudad -->
+          <!-- Dirección + Ciudad -->
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label" for="direccion">Direccion del Inmueble <span class="required">*</span></label>
-              <input type="text" id="direccion" class="form-input" required data-validate="required" placeholder="Direccion completa">
+              <label class="form-label" for="direccion">Dirección del Inmueble <span class="required">*</span></label>
+              <input type="text" id="direccion" class="form-input" required data-validate="required" placeholder="Dirección completa">
               <span class="form-error"></span>
             </div>
             <div class="form-group">
               <label class="form-label" for="ciudad">Ciudad <span class="required">*</span></label>
-              <input type="text" id="ciudad" class="form-input" required data-validate="required" placeholder="Ej: Bogota">
+              <input type="text" id="ciudad" class="form-input" required data-validate="required" placeholder="Ej: Bogotá">
               <span class="form-error"></span>
             </div>
           </div>
@@ -136,12 +150,10 @@
           <div class="form-group">
             <label class="form-label" for="estadoInmueble">Estado del Inmueble <span class="required">*</span></label>
             <select id="estadoInmueble" class="form-select" required>
-              <option value="">Selecciona una opcion</option>
-              <option value="Nuevo">Nuevo</option>
-              <option value="Usado - Buen estado">Usado - Buen estado</option>
-              <option value="Usado - Requiere reparaciones">Usado - Requiere reparaciones</option>
-              <option value="En construccion">En construccion</option>
-              <option value="Remodelado">Remodelado</option>
+              <option value="">Selecciona una opción</option>
+              <option value="Libre de deuda">Libre de deuda</option>
+              <option value="Deuda hipotecaria">Deuda hipotecaria</option>
+              <option value="Leasing">Leasing</option>
             </select>
             <span class="form-error"></span>
           </div>
@@ -164,7 +176,7 @@
               </label>
               <label class="radio-option">
                 <input type="radio" name="estadoCivil" value="Union Libre">
-                <span>Union Libre</span>
+                <span>Unión Libre</span>
               </label>
             </div>
           </div>
@@ -176,16 +188,16 @@
           </div>
         </div>
 
-        <!-- STEP 2: Certificado de Tradicion y Libertad -->
+        <!-- STEP 2: Certificado de Tradición y Libertad -->
         <div class="form-step">
-          <h3 class="form-step__title">Certificado de Tradicion y Libertad</h3>
-          <p class="text-gray mb-sm">Sube el Certificado de Tradicion y Libertad del inmueble. Debe ser reciente (no mayor a 30 dias).</p>
+          <h3 class="form-step__title">Certificado de Tradición y Libertad</h3>
+          <p class="text-gray mb-sm">Sube el Certificado de Tradición y Libertad del inmueble. Debe ser reciente (no mayor a 30 días).</p>
 
           <div class="upload-zone" id="uploadTradicion">
             <input type="file" accept=".pdf" name="tradicion">
             <div class="upload-zone__icon">&#128196;</div>
-            <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
-            <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+            <p class="upload-zone__text">Arrastra tu archivo aquí o haz clic para seleccionar</p>
+            <p class="upload-zone__hint">Solo archivos PDF, máximo 10MB</p>
             <div class="upload-zone__file-info">
               <span class="file-name"></span>
               <span class="file-size"></span>
@@ -200,16 +212,16 @@
           </div>
         </div>
 
-        <!-- STEP 3: Certificacion Bancaria -->
+        <!-- STEP 3: Certificación Bancaria -->
         <div class="form-step">
-          <h3 class="form-step__title">Certificacion Bancaria</h3>
-          <p class="text-gray mb-sm">Sube la certificacion bancaria del vendedor para el desembolso de los fondos.</p>
+          <h3 class="form-step__title">Certificación Bancaria</h3>
+          <p class="text-gray mb-sm">Sube la certificación bancaria del vendedor para el desembolso de los fondos.</p>
 
           <div class="upload-zone" id="uploadBancaria">
             <input type="file" accept=".pdf" name="bancaria">
             <div class="upload-zone__icon">&#127974;</div>
-            <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
-            <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+            <p class="upload-zone__text">Arrastra tu archivo aquí o haz clic para seleccionar</p>
+            <p class="upload-zone__hint">Solo archivos PDF, máximo 10MB</p>
             <div class="upload-zone__file-info">
               <span class="file-name"></span>
               <span class="file-size"></span>
@@ -224,16 +236,16 @@
           </div>
         </div>
 
-        <!-- STEP 4: Cedula del Vendedor -->
+        <!-- STEP 4: Cédula del Vendedor -->
         <div class="form-step">
-          <h3 class="form-step__title">Cedula del Vendedor</h3>
-          <p class="text-gray mb-sm">Sube una copia de la cedula de ciudadania del vendedor (ambos lados).</p>
+          <h3 class="form-step__title">Cédula del Vendedor</h3>
+          <p class="text-gray mb-sm">Sube una copia de la cédula de ciudadanía del vendedor (ambos lados).</p>
 
           <div class="upload-zone" id="uploadCedula">
             <input type="file" accept=".pdf" name="cedulaDoc">
             <div class="upload-zone__icon">&#128179;</div>
-            <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
-            <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+            <p class="upload-zone__text">Arrastra tu archivo aquí o haz clic para seleccionar</p>
+            <p class="upload-zone__hint">Solo archivos PDF, máximo 10MB</p>
             <div class="upload-zone__file-info">
               <span class="file-name"></span>
               <span class="file-size"></span>
@@ -251,13 +263,13 @@
         <!-- STEP 5: RUT -->
         <div class="form-step">
           <h3 class="form-step__title">RUT</h3>
-          <p class="text-gray mb-sm">Sube el Registro Unico Tributario (RUT) actualizado del vendedor.</p>
+          <p class="text-gray mb-sm">Sube el Registro Único Tributario (RUT) actualizado del vendedor.</p>
 
           <div class="upload-zone" id="uploadRut">
             <input type="file" accept=".pdf" name="rut">
             <div class="upload-zone__icon">&#128203;</div>
-            <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
-            <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+            <p class="upload-zone__text">Arrastra tu archivo aquí o haz clic para seleccionar</p>
+            <p class="upload-zone__hint">Solo archivos PDF, máximo 10MB</p>
             <div class="upload-zone__file-info">
               <span class="file-name"></span>
               <span class="file-size"></span>
@@ -272,10 +284,10 @@
           </div>
         </div>
 
-        <!-- STEP 6: Parqueadero / Deposito -->
+        <!-- STEP 6: Parqueadero / Depósito -->
         <div class="form-step">
-          <h3 class="form-step__title">Parqueadero y Deposito</h3>
-          <p class="text-gray mb-sm">Si aplica, sube los certificados de parqueadero y/o deposito asociados al inmueble.</p>
+          <h3 class="form-step__title">Parqueadero y Depósito</h3>
+          <p class="text-gray mb-sm">Si aplica, sube los certificados de parqueadero y/o depósito asociados al inmueble.</p>
 
           <!-- Parqueadero -->
           <div class="form-group">
@@ -285,14 +297,14 @@
             </label>
             <div class="conditional-section">
               <div class="form-group">
-                <label class="form-label" for="numParqueadero">Numero de Parqueadero</label>
+                <label class="form-label" for="numParqueadero">Número de Parqueadero</label>
                 <input type="text" id="numParqueadero" class="form-input" placeholder="Ej: P-12">
               </div>
               <div class="upload-zone" id="uploadParqueadero">
                 <input type="file" accept=".pdf" name="parqueadero">
                 <div class="upload-zone__icon">&#128663;</div>
-                <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
-                <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+                <p class="upload-zone__text">Arrastra tu archivo aquí o haz clic para seleccionar</p>
+                <p class="upload-zone__hint">Solo archivos PDF, máximo 10MB</p>
                 <div class="upload-zone__file-info">
                   <span class="file-name"></span>
                   <span class="file-size"></span>
@@ -302,22 +314,22 @@
             </div>
           </div>
 
-          <!-- Deposito -->
+          <!-- Depósito -->
           <div class="form-group mt-md">
             <label class="checkbox-option">
               <input type="checkbox" id="tieneDeposito">
-              <span>Tiene Certificado de Deposito</span>
+              <span>Tiene Certificado de Depósito</span>
             </label>
             <div class="conditional-section">
               <div class="form-group">
-                <label class="form-label" for="numDeposito">Numero de Deposito</label>
+                <label class="form-label" for="numDeposito">Número de Depósito</label>
                 <input type="text" id="numDeposito" class="form-input" placeholder="Ej: D-05">
               </div>
               <div class="upload-zone" id="uploadDeposito">
                 <input type="file" accept=".pdf" name="deposito">
                 <div class="upload-zone__icon">&#128230;</div>
-                <p class="upload-zone__text">Arrastra tu archivo aqui o haz clic para seleccionar</p>
-                <p class="upload-zone__hint">Solo archivos PDF, maximo 10MB</p>
+                <p class="upload-zone__text">Arrastra tu archivo aquí o haz clic para seleccionar</p>
+                <p class="upload-zone__hint">Solo archivos PDF, máximo 10MB</p>
                 <div class="upload-zone__file-info">
                   <span class="file-name"></span>
                   <span class="file-size"></span>
@@ -345,8 +357,8 @@
         <h4>BRIKSS</h4>
         <ul>
           <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Publica un inmueble</a></li>
-          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Unete al equipo</a></li>
-          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Conocenos</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Únete al equipo</a></li>
+          <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Conócenos</a></li>
           <li><a href="https://www.brikss.com/" target="_blank" rel="noopener">Blog</a></li>
         </ul>
       </div>
@@ -366,11 +378,11 @@
         </div>
         <div class="footer__contact-item">
           <span aria-hidden="true">&#128205;</span>
-          <span>Cra. 15 #98 42 of 505, Bogota</span>
+          <span>Cra. 15 #98 42 of 505, Bogotá</span>
         </div>
       </div>
       <div class="footer__section">
-        <h4>Siguenos</h4>
+        <h4>Síguenos</h4>
         <div class="footer__social">
           <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>

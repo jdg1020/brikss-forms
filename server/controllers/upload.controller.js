@@ -1,17 +1,22 @@
 /**
- * Controlador de carga de archivos y procesamiento de formularios
- * Maneja la recepcion de datos y archivos PDF de los tres flujos
+ * Controlador unificado de carga de archivos y procesamiento de formularios.
+ * Procesa los 3 flujos (comprador, vendedor, arriendo) con un solo pipeline parametrizado.
  */
 
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
+const { customAlphabet } = require('nanoid');
+
 const googleDriveService = require('../services/googleDrive.service');
 const googleSheetsService = require('../services/googleSheets.service');
 const emailService = require('../services/email.service');
+const { schemas, validate, sanitizeForDrive } = require('../config/formSchemas');
+const { assertPdf } = require('../utils/pdfValidator');
 
-// Configuracion de multer para archivos temporales
+const REF_ID_ALPHABET = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+const generateSeq = customAlphabet(REF_ID_ALPHABET, 6);
+
 const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
@@ -20,7 +25,8 @@ if (!fs.existsSync(uploadsDir)) {
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, uploadsDir),
   filename: (_req, file, cb) => {
-    const uniqueName = `${Date.now()}-${uuidv4()}${path.extname(file.originalname)}`;
+    const safeOriginal = path.basename(file.originalname).replace(/[^\w.\-]/g, '_').slice(0, 60);
+    const uniqueName = `${Date.now()}-${generateSeq()}-${safeOriginal}`;
     cb(null, uniqueName);
   }
 });
@@ -36,278 +42,169 @@ const fileFilter = (_req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+  limits: { fileSize: 10 * 1024 * 1024, files: 8 }
 });
 
-// Generar ID de referencia
 function generateRefId(prefix) {
   const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
-  const seq = String(Math.floor(Math.random() * 999) + 1).padStart(3, '0');
-  return `${prefix}-${date}-${seq}`;
+  return `${prefix}-${date}-${generateSeq()}`;
 }
 
-// Generar URL de carpeta en Drive
 function getDriveFolderUrl(folderId) {
   return folderId ? `https://drive.google.com/drive/folders/${folderId}` : '';
 }
 
-// Limpiar archivos temporales
 function cleanupFiles(files) {
   if (!files) return;
   const fileList = Array.isArray(files) ? files : Object.values(files).flat();
   fileList.forEach(file => {
     if (file && file.path && fs.existsSync(file.path)) {
-      fs.unlinkSync(file.path);
+      try { fs.unlinkSync(file.path); } catch (_) { /* ignore */ }
     }
   });
 }
 
 /**
- * Procesar formulario de COMPRADOR
+ * Pipeline generico para procesar un formulario.
+ * @param {string} schemaName - nombre del schema (comprador, vendedor, arriendo)
  */
-async function processComprador(req, res, next) {
-  try {
-    const data = JSON.parse(req.body.data || '{}');
-    const refId = generateRefId('COMP');
+function buildProcessor(schemaName) {
+  const schema = schemas[schemaName];
+  if (!schema) throw new Error(`Schema desconocido: ${schemaName}`);
 
-    // Validaciones basicas del servidor
-    if (!data.nombre || !data.cedula || !data.email) {
-      cleanupFiles(req.files);
-      return res.status(400).json({
-        success: false,
-        message: 'Faltan campos obligatorios: nombre, cedula, email'
-      });
-    }
-
-    if (!req.files || !req.files.cedula || req.files.cedula.length === 0) {
-      cleanupFiles(req.files);
-      return res.status(400).json({
-        success: false,
-        message: 'Es obligatorio adjuntar la cedula del comprador'
-      });
-    }
-
-    // Nombre de carpeta: "Nombre Completo - COMP-20260226-001"
-    const folderName = `${data.nombre.trim()} - ${refId}`;
-
-    // Subir a Google Drive
-    let driveResult = null;
+  return async function process(req, res, next) {
     try {
-      driveResult = await googleDriveService.uploadFormFiles(
-        'Compradores',
-        folderName,
-        data,
-        req.files
-      );
-    } catch (driveError) {
-      console.warn('[Drive] No se pudo subir a Google Drive:', driveError.message);
-    }
-
-    // Registrar en Google Sheets
-    const driveFolderUrl = driveResult && driveResult.folderId
-      ? getDriveFolderUrl(driveResult.folderId)
-      : '';
-    try {
-      await googleSheetsService.logComprador(data, refId, driveFolderUrl);
-    } catch (sheetsError) {
-      console.warn('[Sheets] No se pudo registrar en Sheets:', sheetsError.message);
-    }
-
-    // Enviar email de confirmacion
-    try {
-      await emailService.sendConfirmation({
-        to: data.email,
-        nombre: data.nombre,
-        tipo: 'Comprador',
-        id: refId,
-        fecha: new Date().toLocaleDateString('es-CO')
-      });
-    } catch (emailError) {
-      console.warn('[Email] No se pudo enviar confirmacion:', emailError.message);
-    }
-
-    // Limpiar archivos temporales
-    cleanupFiles(req.files);
-
-    res.json({
-      success: true,
-      id: refId,
-      message: 'Formulario de comprador recibido exitosamente',
-      driveUploaded: !!driveResult
-    });
-  } catch (error) {
-    cleanupFiles(req.files);
-    next(error);
-  }
-}
-
-/**
- * Procesar formulario de VENDEDOR
- */
-async function processVendedor(req, res, next) {
-  try {
-    const data = JSON.parse(req.body.data || '{}');
-    const refId = generateRefId('VEND');
-
-    if (!data.nombre || !data.cedula || !data.email) {
-      cleanupFiles(req.files);
-      return res.status(400).json({
-        success: false,
-        message: 'Faltan campos obligatorios: nombre, cedula, email'
-      });
-    }
-
-    const requiredFiles = ['tradicion', 'bancaria', 'cedula', 'rut'];
-    const missingFiles = requiredFiles.filter(
-      name => !req.files || !req.files[name] || req.files[name].length === 0
-    );
-
-    if (missingFiles.length > 0) {
-      cleanupFiles(req.files);
-      return res.status(400).json({
-        success: false,
-        message: `Faltan documentos obligatorios: ${missingFiles.join(', ')}`
-      });
-    }
-
-    // Nombre de carpeta: "Nombre Completo - VEND-20260226-001"
-    const folderName = `${data.nombre.trim()} - ${refId}`;
-
-    let driveResult = null;
-    try {
-      driveResult = await googleDriveService.uploadFormFiles(
-        'Vendedores',
-        folderName,
-        data,
-        req.files
-      );
-    } catch (driveError) {
-      console.warn('[Drive] No se pudo subir a Google Drive:', driveError.message);
-    }
-
-    // Registrar en Google Sheets
-    const driveFolderUrl = driveResult && driveResult.folderId
-      ? getDriveFolderUrl(driveResult.folderId)
-      : '';
-    try {
-      await googleSheetsService.logVendedor(data, refId, driveFolderUrl);
-    } catch (sheetsError) {
-      console.warn('[Sheets] No se pudo registrar en Sheets:', sheetsError.message);
-    }
-
-    try {
-      await emailService.sendConfirmation({
-        to: data.email,
-        nombre: data.nombre,
-        tipo: 'Vendedor',
-        id: refId,
-        fecha: new Date().toLocaleDateString('es-CO')
-      });
-    } catch (emailError) {
-      console.warn('[Email] No se pudo enviar confirmacion:', emailError.message);
-    }
-
-    cleanupFiles(req.files);
-
-    res.json({
-      success: true,
-      id: refId,
-      message: 'Formulario de vendedor recibido exitosamente',
-      driveUploaded: !!driveResult
-    });
-  } catch (error) {
-    cleanupFiles(req.files);
-    next(error);
-  }
-}
-
-/**
- * Procesar formulario de ARRIENDO
- */
-async function processArriendo(req, res, next) {
-  try {
-    const data = JSON.parse(req.body.data || '{}');
-    const refId = generateRefId('ARR');
-
-    if (!data.arrendadorNombre || !data.arrendatarioNombre) {
-      cleanupFiles(req.files);
-      return res.status(400).json({
-        success: false,
-        message: 'Faltan nombres del arrendador y/o arrendatario'
-      });
-    }
-
-    const requiredFiles = ['cedulaArrendador', 'cedulaArrendatario', 'tradicion'];
-    const missingFiles = requiredFiles.filter(
-      name => !req.files || !req.files[name] || req.files[name].length === 0
-    );
-
-    if (missingFiles.length > 0) {
-      cleanupFiles(req.files);
-      return res.status(400).json({
-        success: false,
-        message: `Faltan documentos obligatorios: ${missingFiles.join(', ')}`
-      });
-    }
-
-    // Nombre de carpeta: "Arrendador - Arrendatario - ARR-20260226-001"
-    const folderName = `${data.arrendadorNombre.trim()} - ${data.arrendatarioNombre.trim()} - ${refId}`;
-
-    let driveResult = null;
-    try {
-      driveResult = await googleDriveService.uploadFormFiles(
-        'Arriendos',
-        folderName,
-        data,
-        req.files
-      );
-    } catch (driveError) {
-      console.warn('[Drive] No se pudo subir a Google Drive:', driveError.message);
-    }
-
-    // Registrar en Google Sheets
-    const driveFolderUrl = driveResult && driveResult.folderId
-      ? getDriveFolderUrl(driveResult.folderId)
-      : '';
-    try {
-      await googleSheetsService.logArriendo(data, refId, driveFolderUrl);
-    } catch (sheetsError) {
-      console.warn('[Sheets] No se pudo registrar en Sheets:', sheetsError.message);
-    }
-
-    // Enviar email a ambas partes
-    const emails = [data.arrendadorEmail, data.arrendatarioEmail].filter(Boolean);
-    for (const email of emails) {
+      let data;
       try {
-        await emailService.sendConfirmation({
-          to: email,
-          nombre: email === data.arrendadorEmail
-            ? data.arrendadorNombre
-            : data.arrendatarioNombre,
-          tipo: 'Arriendo',
-          id: refId,
-          fecha: new Date().toLocaleDateString('es-CO')
+        // Reviver descarta __proto__/constructor/prototype: defensa anti
+        // prototype-pollution antes de pasar el objeto a validate() y a
+        // los services de Drive/Sheets (que iteran sobre claves).
+        data = JSON.parse(req.body.data || '{}', (key, value) => {
+          if (key === '__proto__' || key === 'constructor' || key === 'prototype') return undefined;
+          return value;
         });
-      } catch (emailError) {
-        console.warn('[Email] No se pudo enviar a', email, ':', emailError.message);
+      } catch (parseErr) {
+        cleanupFiles(req.files);
+        return res.status(400).json({
+          success: false,
+          message: 'Payload inválido (JSON malformado)'
+        });
       }
+
+      const { valid, errors } = validate(data, schemaName);
+      if (!valid) {
+        cleanupFiles(req.files);
+        return res.status(400).json({
+          success: false,
+          message: 'Datos inválidos',
+          errors
+        });
+      }
+
+      const missingFiles = schema.files.required.filter(
+        name => !req.files || !req.files[name] || req.files[name].length === 0
+      );
+      if (missingFiles.length > 0) {
+        cleanupFiles(req.files);
+        return res.status(400).json({
+          success: false,
+          message: `Faltan documentos obligatorios: ${missingFiles.join(', ')}`
+        });
+      }
+
+      try {
+        for (const fileArray of Object.values(req.files || {})) {
+          for (const file of fileArray) {
+            assertPdf(file.path, file.fieldname);
+          }
+        }
+      } catch (pdfErr) {
+        cleanupFiles(req.files);
+        return res.status(400).json({
+          success: false,
+          message: pdfErr.message || 'Archivo PDF inválido'
+        });
+      }
+
+      const refId = generateRefId(schema.prefix);
+      const folderName = sanitizeForDrive(schema.folderName(data, refId));
+
+      // Drive es bloqueante: si falla, devolvemos 503 y NO ejecutamos Sheets ni
+      // Email. La lectura comercial es: si los documentos no quedaron guardados,
+      // el formulario NO se proceso — el usuario debe reintentar.
+      let driveResult;
+      try {
+        driveResult = await googleDriveService.uploadFormFiles(
+          schema.tipoFolder,
+          folderName,
+          data,
+          req.files
+        );
+      } catch (driveError) {
+        console.error(`[Drive] Fallo subida (${schemaName}) ${refId}:`, driveError.message);
+        cleanupFiles(req.files);
+        return res.status(503).json({
+          success: false,
+          code: 'DRIVE_UNAVAILABLE',
+          message: 'No pudimos guardar tus documentos en este momento. Por favor vuelve a cargarlos e intenta nuevamente en unos minutos.'
+        });
+      }
+
+      const driveFolderUrl = driveResult && driveResult.folderId
+        ? getDriveFolderUrl(driveResult.folderId)
+        : '';
+
+      // Sheets y Email son best-effort: el documento ya esta en Drive, no
+      // queremos forzar al usuario a re-subirlo si solo fallo el registro.
+      try {
+        const logger = googleSheetsService[`log${capitalize(schemaName)}`];
+        if (logger) await logger.call(googleSheetsService, data, refId, driveFolderUrl);
+      } catch (sheetsError) {
+        console.warn(`[Sheets] Fallo registro (${schemaName}) ${refId}:`, sheetsError.message);
+      }
+
+      const recipients = collectEmails(data, schemaName);
+      for (const recipient of recipients) {
+        try {
+          await emailService.sendConfirmation({
+            to: recipient.email,
+            nombre: recipient.nombre,
+            tipo: schema.sheetType,
+            id: refId,
+            fecha: new Date().toLocaleDateString('es-CO')
+          });
+        } catch (emailError) {
+          console.warn(`[Email] Fallo envio (${refId}):`, emailError.message);
+        }
+      }
+
+      res.json({
+        success: true,
+        id: refId,
+        message: `Formulario de ${schema.sheetType.toLowerCase()} recibido exitosamente`,
+        driveUploaded: !!(driveResult && driveResult.folderId),
+        driveFolderUrl
+      });
+    } catch (error) {
+      next(error);
+    } finally {
+      cleanupFiles(req.files);
     }
-
-    cleanupFiles(req.files);
-
-    res.json({
-      success: true,
-      id: refId,
-      message: 'Formulario de arriendo recibido exitosamente',
-      driveUploaded: !!driveResult
-    });
-  } catch (error) {
-    cleanupFiles(req.files);
-    next(error);
-  }
+  };
 }
 
-// Middleware de multer para cada flujo
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function collectEmails(data, _schemaName) {
+  // Notificación interna: cada submisión envía el correo al equipo Brikss,
+  // no al cliente que llenó el formulario. Configurable vía env var; default
+  // a negocios.brikss@gmail.com.
+  const internalRecipient = process.env.INTERNAL_NOTIFICATION_EMAIL || 'negocios.brikss@gmail.com';
+  return [{ email: internalRecipient, nombre: data.nombre || 'Cliente' }];
+}
+
 const uploadComprador = upload.fields([
   { name: 'cedula', maxCount: 1 }
 ]);
@@ -321,18 +218,24 @@ const uploadVendedor = upload.fields([
   { name: 'deposito', maxCount: 1 }
 ]);
 
-const uploadArriendo = upload.fields([
-  { name: 'cedulaArrendador', maxCount: 1 },
-  { name: 'cedulaArrendatario', maxCount: 1 },
+const uploadArrendador = upload.fields([
+  { name: 'cedula', maxCount: 1 },
   { name: 'tradicion', maxCount: 1 },
+  { name: 'certificacionBancaria', maxCount: 1 }
+]);
+
+const uploadArrendatario = upload.fields([
+  { name: 'cedula', maxCount: 1 },
   { name: 'cedulaCodeudor', maxCount: 1 }
 ]);
 
 module.exports = {
-  processComprador,
-  processVendedor,
-  processArriendo,
+  processComprador: buildProcessor('comprador'),
+  processVendedor: buildProcessor('vendedor'),
+  processArrendador: buildProcessor('arrendador'),
+  processArrendatario: buildProcessor('arrendatario'),
   uploadComprador,
   uploadVendedor,
-  uploadArriendo
+  uploadArrendador,
+  uploadArrendatario
 };

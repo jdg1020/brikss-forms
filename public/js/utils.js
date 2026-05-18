@@ -7,7 +7,7 @@
 const Validators = {
   cedula: (value) => /^\d{6,10}$/.test(value.replace(/\s/g, '')),
   celular: (value) => /^(\+?57)?\s?\d{10}$/.test(value.replace(/[\s-]/g, '')),
-  email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+  email: (value) => /^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/.test(value),
   required: (value) => value !== null && value !== undefined && String(value).trim().length > 0,
   minLength: (value, min) => String(value).trim().length >= min,
   maxLength: (value, max) => String(value).trim().length <= max,
@@ -28,17 +28,17 @@ const Validators = {
   }
 };
 
-// Mensajes de error en espanol
+// Mensajes de error en español (con tildes correctas)
 const ErrorMessages = {
-  cedula: 'Ingresa un numero de cedula valido (6-10 digitos)',
-  celular: 'Ingresa un numero de celular valido (10 digitos)',
-  email: 'Ingresa un correo electronico valido',
+  cedula: 'Ingresa un número de cédula válido (6-10 dígitos)',
+  celular: 'Ingresa un número de celular válido (10 dígitos)',
+  email: 'Ingresa un correo electrónico válido',
   required: 'Este campo es obligatorio',
-  minLength: (min) => `Minimo ${min} caracteres`,
+  minLength: (min) => `Mínimo ${min} caracteres`,
   futureDate: 'La fecha debe ser posterior a hoy',
   pdfType: 'Solo se permiten archivos PDF',
   pdfSize: 'El archivo no puede exceder 10MB',
-  money: 'Ingresa un monto valido'
+  money: 'Ingresa un monto válido'
 };
 
 /* ── Validacion de campos en tiempo real ──────────────────── */
@@ -113,39 +113,81 @@ function toggleFieldState(input, isValid, errorMsg) {
 }
 
 /* ── Validar paso completo ────────────────────────────────── */
+// Devuelve { valid, invalidFields: [{label, reason, el}] }. El llamador puede
+// usar invalidFields para construir un mensaje específico y hacer scroll al
+// primer campo inválido. La función mantiene el efecto secundario de marcar
+// los campos con `is-invalid` (clase CSS) para feedback visual.
 function validateStep(stepEl) {
-  let allValid = true;
-  const inputs = stepEl.querySelectorAll('[data-validate]');
+  const invalidFields = [];
 
+  function labelFor(el) {
+    if (el.id) {
+      const label = stepEl.querySelector(`label[for="${el.id}"]`);
+      if (label) return label.textContent.replace('*', '').trim();
+    }
+    return el.getAttribute('aria-label') || el.name || el.id || 'Campo';
+  }
+
+  const inputs = stepEl.querySelectorAll('[data-validate]');
   inputs.forEach(input => {
     const type = input.dataset.validate;
     const isValid = validateField(input, type);
     if (!isValid && input.hasAttribute('required')) {
-      allValid = false;
+      const value = (input.value || '').trim();
+      const reason = value === ''
+        ? 'falta llenar'
+        : (ErrorMessages[type] || 'formato inválido');
+      invalidFields.push({ label: labelFor(input), reason, el: input });
     }
   });
 
-  // Validar selects requeridos
-  const selects = stepEl.querySelectorAll('select[required]');
-  selects.forEach(select => {
+  // Selects requeridos
+  stepEl.querySelectorAll('select[required]').forEach(select => {
     if (!select.value) {
-      allValid = false;
       select.classList.add('is-invalid');
+      invalidFields.push({ label: labelFor(select), reason: 'falta seleccionar', el: select });
     }
   });
 
-  // Validar radios requeridos
-  const radioGroups = stepEl.querySelectorAll('[data-radio-required]');
-  radioGroups.forEach(group => {
+  // Radios requeridos
+  stepEl.querySelectorAll('[data-radio-required]').forEach(group => {
     const name = group.dataset.radioRequired;
     const checked = stepEl.querySelector(`input[name="${name}"]:checked`);
     if (!checked) {
-      allValid = false;
       group.classList.add('is-invalid');
+      const groupLabel = group.getAttribute('aria-label')
+        || (group.previousElementSibling && group.previousElementSibling.textContent.replace('*', '').trim())
+        || name;
+      invalidFields.push({ label: groupLabel, reason: 'falta seleccionar', el: group });
     }
   });
 
-  return allValid;
+  return { valid: invalidFields.length === 0, invalidFields };
+}
+
+/* ── Reporte de campos inválidos ──────────────────────────── */
+// Construye un toast específico, hace scroll al primer error y registra el
+// detalle en consola para debug. Se llama desde FormWizard.next/submit.
+function reportInvalidFields(invalidFields) {
+  if (!invalidFields || invalidFields.length === 0) return;
+
+  console.warn('[Wizard] Validación falló en:', invalidFields.map(f => `${f.label} (${f.reason})`));
+
+  const first = invalidFields[0];
+  const summary = invalidFields.length === 1
+    ? `Revisa: ${first.label} — ${first.reason}`
+    : `Revisa estos campos: ${invalidFields.map(f => f.label).join(', ')}`;
+  showToast(summary, 'warning', 6000);
+
+  if (first.el && typeof first.el.scrollIntoView === 'function') {
+    first.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const focusable = first.el.matches('input, select, textarea')
+      ? first.el
+      : first.el.querySelector('input, select, textarea');
+    if (focusable && typeof focusable.focus === 'function') {
+      setTimeout(() => focusable.focus({ preventScroll: true }), 300);
+    }
+  }
 }
 
 /* ── Toast Notifications ──────────────────────────────────── */
@@ -172,7 +214,13 @@ function showToast(message, type = 'info', duration = 4000) {
 
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
-  toast.innerHTML = `<span>${icons[type] || ''}</span> <span>${message}</span>`;
+  const iconSpan = document.createElement('span');
+  iconSpan.textContent = icons[type] || '';
+  const msgSpan = document.createElement('span');
+  msgSpan.textContent = message;
+  toast.appendChild(iconSpan);
+  toast.appendChild(document.createTextNode(' '));
+  toast.appendChild(msgSpan);
   container.appendChild(toast);
 
   setTimeout(() => {
@@ -183,6 +231,10 @@ function showToast(message, type = 'info', duration = 4000) {
 
 /* ── Upload Zone (Drag & Drop) ────────────────────────────── */
 function setupUploadZone(zoneEl, options = {}) {
+  if (!zoneEl) {
+    console.warn('[UploadZone] zoneEl es null — revisar el id en el HTML');
+    return null;
+  }
   const input = zoneEl.querySelector('input[type="file"]');
   const fileInfo = zoneEl.querySelector('.upload-zone__file-info');
   const fileName = zoneEl.querySelector('.file-name');
@@ -295,9 +347,9 @@ class FormWizard {
   }
 
   next() {
-    // Validar paso actual antes de avanzar
-    if (!validateStep(this.steps[this.currentStep])) {
-      showToast('Por favor completa todos los campos requeridos', 'warning');
+    const result = validateStep(this.steps[this.currentStep]);
+    if (!result.valid) {
+      reportInvalidFields(result.invalidFields);
       return false;
     }
 
@@ -364,18 +416,51 @@ class FormWizard {
   }
 
   async submit() {
-    // Validar ultimo paso
-    if (!validateStep(this.steps[this.currentStep])) {
-      showToast('Por favor completa todos los campos requeridos', 'warning');
+    const result = validateStep(this.steps[this.currentStep]);
+    if (!result.valid) {
+      reportInvalidFields(result.invalidFields);
       return;
     }
 
+    // Guard contra doble submit: deshabilita el boton durante la ejecucion.
+    // Si todo sale bien, showConfirmation reemplaza el form y el boton ya no
+    // existe. Si falla, lo re-habilitamos para permitir reintento.
+    const submitBtn = this.formEl.querySelector('[data-action="submit"]')
+      || document.getElementById('btnSubmit');
+
+    if (this._submitting) return;
+    this._submitting = true;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.setAttribute('aria-busy', 'true');
+      submitBtn.dataset._origLabel = submitBtn.textContent;
+      submitBtn.textContent = 'Enviando...';
+    }
+
     try {
-      showLoading('Subiendo documentos...', 'Esto puede tomar unos segundos');
+      showLoading('Subiendo documentos…', 'Esto puede tomar unos segundos');
       await this.onSubmit();
     } catch (error) {
       hideLoading();
-      showToast('Error al enviar los documentos: ' + error.message, 'error');
+      if (error && error.code === 'DRIVE_UNAVAILABLE') {
+        showToast(
+          'No pudimos guardar tus documentos. Por favor vuelve a cargarlos e inténtalo nuevamente en unos minutos.',
+          'error',
+          8000
+        );
+      } else {
+        showToast('Error al enviar los documentos: ' + (error.message || 'desconocido'), 'error');
+      }
+    } finally {
+      this._submitting = false;
+      if (submitBtn && document.body.contains(submitBtn)) {
+        submitBtn.disabled = false;
+        submitBtn.removeAttribute('aria-busy');
+        if (submitBtn.dataset._origLabel) {
+          submitBtn.textContent = submitBtn.dataset._origLabel;
+          delete submitBtn.dataset._origLabel;
+        }
+      }
     }
   }
 }
@@ -386,13 +471,20 @@ function showLoading(title = 'Procesando...', subtitle = '') {
   if (!overlay) {
     overlay = document.createElement('div');
     overlay.className = 'loading-overlay';
-    overlay.innerHTML = `
-      <div class="loading-content">
-        <div class="spinner"></div>
-        <p class="loading-title">${title}</p>
-        <small class="loading-subtitle">${subtitle}</small>
-      </div>
-    `;
+    const content = document.createElement('div');
+    content.className = 'loading-content';
+    const spinner = document.createElement('div');
+    spinner.className = 'spinner';
+    const titleEl = document.createElement('p');
+    titleEl.className = 'loading-title';
+    titleEl.textContent = title;
+    const subtitleEl = document.createElement('small');
+    subtitleEl.className = 'loading-subtitle';
+    subtitleEl.textContent = subtitle;
+    content.appendChild(spinner);
+    content.appendChild(titleEl);
+    content.appendChild(subtitleEl);
+    overlay.appendChild(content);
     document.body.appendChild(overlay);
   } else {
     overlay.querySelector('.loading-title').textContent = title;
@@ -411,27 +503,66 @@ function showConfirmation(data) {
   const formCard = document.querySelector('.form-card');
   if (!formCard) return;
 
-  formCard.innerHTML = `
-    <div class="confirmation">
-      <div class="confirmation__icon">\u2714\uFE0F</div>
-      <h2>Documentos Enviados Exitosamente</h2>
-      <p>Hemos recibido tu informacion. Nos pondremos en contacto contigo pronto.</p>
-      <dl class="confirmation__details">
-        <dt>Tipo de Tramite</dt>
-        <dd>${data.tipo || ''}</dd>
-        <dt>ID de Referencia</dt>
-        <dd>${data.id || ''}</dd>
-        <dt>Nombre</dt>
-        <dd>${data.nombre || ''}</dd>
-        <dt>Fecha de Envio</dt>
-        <dd>${new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</dd>
-      </dl>
-      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-        <a href="/" class="btn btn-primary">Volver al Inicio</a>
-        <button onclick="window.print()" class="btn btn-secondary">Imprimir Copia</button>
-      </div>
-    </div>
-  `;
+  while (formCard.firstChild) formCard.removeChild(formCard.firstChild);
+
+  const wrap = document.createElement('div');
+  wrap.className = 'confirmation';
+
+  const icon = document.createElement('div');
+  icon.className = 'confirmation__icon';
+  icon.textContent = '\u2714\uFE0F';
+  wrap.appendChild(icon);
+
+  const h2 = document.createElement('h2');
+  h2.textContent = 'Documentos Enviados Exitosamente';
+  wrap.appendChild(h2);
+
+  const p = document.createElement('p');
+  p.textContent = 'Hemos recibido tu información. Nos pondremos en contacto contigo pronto.';
+  wrap.appendChild(p);
+
+  const dl = document.createElement('dl');
+  dl.className = 'confirmation__details';
+
+  const fechaStr = new Date().toLocaleDateString('es-CO', {
+    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+  });
+
+  const rows = [
+    ['Tipo de Trámite', data.tipo || ''],
+    ['ID de Referencia', data.id || ''],
+    ['Nombre', data.nombre || ''],
+    ['Fecha de Envío', fechaStr]
+  ];
+
+  for (const [label, value] of rows) {
+    const dt = document.createElement('dt');
+    dt.textContent = label;
+    const dd = document.createElement('dd');
+    dd.textContent = value;
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+  }
+  wrap.appendChild(dl);
+
+  const btns = document.createElement('div');
+  btns.style.cssText = 'display:flex;gap:1rem;justify-content:center;flex-wrap:wrap';
+
+  const homeLink = document.createElement('a');
+  homeLink.href = '/';
+  homeLink.className = 'btn btn-primary';
+  homeLink.textContent = 'Volver al Inicio';
+  btns.appendChild(homeLink);
+
+  const printBtn = document.createElement('button');
+  printBtn.type = 'button';
+  printBtn.className = 'btn btn-secondary';
+  printBtn.textContent = 'Imprimir copia';
+  printBtn.addEventListener('click', () => window.print());
+  btns.appendChild(printBtn);
+
+  wrap.appendChild(btns);
+  formCard.appendChild(wrap);
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -460,6 +591,15 @@ function formatCurrency(input) {
   });
 }
 
+// Lee un input de dinero (formateado "1.500.000") como entero plano para
+// enviar al server. Devuelve '' si el campo está vacío.
+function readMoney(id) {
+  const el = document.getElementById(id);
+  if (!el) return '';
+  const digits = String(el.value || '').replace(/\D/g, '');
+  return digits ? String(parseInt(digits, 10)) : '';
+}
+
 // Generar ID unico para la referencia
 function generateRefId(prefix) {
   const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
@@ -477,7 +617,9 @@ function buildFormData(data, files) {
   return formData;
 }
 
-// Enviar formulario al servidor
+// Enviar formulario al servidor.
+// En error, el Error incluye .status (HTTP) y .code (codigo de aplicacion,
+// ej. 'DRIVE_UNAVAILABLE') para que el caller pueda mostrar UX especifica.
 async function submitForm(endpoint, formData) {
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -485,8 +627,11 @@ async function submitForm(endpoint, formData) {
   });
 
   if (!response.ok) {
-    const err = await response.json().catch(() => ({ message: 'Error del servidor' }));
-    throw new Error(err.message || 'Error al enviar los datos');
+    const body = await response.json().catch(() => ({ message: 'Error del servidor' }));
+    const err = new Error(body.message || 'Error al enviar los datos');
+    err.status = response.status;
+    err.code = body.code || null;
+    throw err;
   }
 
   return response.json();
@@ -500,9 +645,14 @@ function initAutoValidation() {
 }
 
 /* ── Menu movil ───────────────────────────────────────────── */
-function toggleMenu() {
-  const nav = document.querySelector('.header__nav');
+function setupMobileMenu() {
   const btn = document.querySelector('.header__menu-toggle');
-  const isOpen = nav.classList.toggle('open');
-  btn.setAttribute('aria-expanded', isOpen);
+  const nav = document.querySelector('.header__nav');
+  if (!btn || !nav) return;
+  btn.addEventListener('click', () => {
+    const isOpen = nav.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(isOpen));
+  });
 }
+
+document.addEventListener('DOMContentLoaded', setupMobileMenu);
